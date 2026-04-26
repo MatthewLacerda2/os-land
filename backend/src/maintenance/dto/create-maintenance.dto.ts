@@ -16,6 +16,11 @@ export class CreateEquipmentPhotoDto {
 }
 
 export class CreateEquipmentDto {
+  @ApiProperty({ example: 'Sala de Servidores A' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
   @ApiProperty({ enum: ProtocolType })
   @IsNotEmpty()
   protocolType: ProtocolType;

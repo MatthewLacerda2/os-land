@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useServiceStore } from '@/store/useServiceStore'
 
 type SystemType = 'Split' | 'Self' | 'Splitão'
 type ProtocolType = 'Corretiva' | 'Preventiva'
@@ -49,14 +50,19 @@ const PHOTO_TASKS: Record<SystemType, PhotoTask[]> = {
 
 export default function AddEnvironment() {
   const navigate = useNavigate()
+  const { addEnvironment } = useServiceStore()
+  
   const [envName, setEnvName] = useState('')
   const [protocol, setProtocol] = useState<ProtocolType>('Corretiva')
   const [system, setSystem] = useState<SystemType>('Split')
+  
+  const [taskFiles, setTaskFiles] = useState<Record<string, File>>({})
   const [taskPreviews, setTaskPreviews] = useState<Record<string, string>>({})
 
   const handleFileSelect = (taskId: string, file: File | null) => {
     if (file) {
       const url = URL.createObjectURL(file)
+      setTaskFiles(prev => ({ ...prev, [taskId]: file }))
       setTaskPreviews(prev => ({ ...prev, [taskId]: url }))
     }
   }
@@ -67,6 +73,32 @@ export default function AddEnvironment() {
   }
 
   const handleSave = () => {
+    if (!envName) {
+      alert('Por favor, insira o nome do local.')
+      return
+    }
+
+    const requiredTasks = PHOTO_TASKS[system]
+    const allPhotosCaptured = requiredTasks.every(task => !!taskFiles[task.id])
+
+    if (!allPhotosCaptured) {
+      alert(`Por favor, capture fotos de TODOS os componentes do sistema ${system}.`)
+      return
+    }
+
+    const photos = Object.entries(taskFiles).map(([taskId, file]) => ({
+      label: PHOTO_TASKS[system].find(t => t.id === taskId)?.label || taskId,
+      file,
+      previewUrl: taskPreviews[taskId]
+    }))
+
+    addEnvironment({
+      name: envName,
+      protocolType: protocol === 'Corretiva' ? 'corrective' : 'preventive',
+      designatedSystem: system.toLowerCase().replace('ão', 'ao'),
+      photos
+    })
+    
     navigate('/service/review')
   }
 
@@ -140,6 +172,7 @@ export default function AddEnvironment() {
                 onClick={() => {
                   setSystem(type)
                   setTaskPreviews({})
+                  setTaskFiles({})
                 }}
                 className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${
                   system === type

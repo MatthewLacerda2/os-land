@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Building2,
-  Monitor,
   Pencil,
   Plus,
   Send,
@@ -10,10 +9,17 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+import { useServiceStore } from '@/store/useServiceStore'
+import {
+  Image as ImageIcon
+} from 'lucide-react'
+
 export default function ReviewService() {
   const navigate = useNavigate()
+  const { currentOrder } = useServiceStore()
 
   const handleConfirm = () => {
+    console.log('Final Order Data:', currentOrder)
     navigate('/service/complete')
   }
 
@@ -45,15 +51,15 @@ export default function ReviewService() {
           <CardContent className="p-5 pt-2 grid gap-4">
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Número da OS</p>
-              <p className="text-sm font-bold text-slate-700">OS-2023-8842</p>
+              <p className="text-sm font-bold text-slate-700">{currentOrder.osNumber || 'N/A'}</p>
             </div>
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Agência</p>
-              <p className="text-sm font-bold text-slate-700">Central Bank - Branch 04</p>
+              <p className="text-sm font-bold text-slate-700">{currentOrder.agency || 'N/A'}</p>
             </div>
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">UF</p>
-              <p className="text-sm font-bold text-slate-700">SP</p>
+              <p className="text-sm font-bold text-slate-700">{currentOrder.state?.toUpperCase() || 'N/A'}</p>
             </div>
           </CardContent>
         </Card>
@@ -73,25 +79,21 @@ export default function ReviewService() {
             </Button>
           </CardHeader>
 
-          <CardContent className="p-5 pt-2 space-y-2">
-            <EnvironmentItem
-              name="Server Room A"
-              details="2 Unidades HVAC"
-              icon={<Server className="w-5 h-5" />}
-              onEdit={() => navigate('/service/environment/add')}
-            />
-            <EnvironmentItem
-              name="Main Lobby"
-              details="1 Unidade Central"
-              icon={<Building2 className="w-5 h-5" />}
-              onEdit={() => navigate('/service/environment/add')}
-            />
-            <EnvironmentItem
-              name="Manager Office"
-              details="1 Unidade Split"
-              icon={<Monitor className="w-5 h-5" />}
-              onEdit={() => navigate('/service/environment/add')}
-            />
+          <CardContent className="p-5 pt-2 space-y-4">
+            {currentOrder.environments.length === 0 ? (
+              <p className="text-xs text-slate-400 italic text-center py-4">Nenhum ambiente adicionado.</p>
+            ) : (
+              currentOrder.environments.map((env) => (
+                <EnvironmentItem
+                  key={env.id}
+                  name={env.name}
+                  details={`${env.photos.length} fotos capturadas • ${env.protocolType === 'corrective' ? 'Corretiva' : 'Preventiva'}`}
+                  icon={env.designatedSystem === 'split' ? <Server className="w-5 h-5" /> : <Building2 className="w-5 h-5" />}
+                  photos={env.photos.map(p => p.previewUrl)}
+                  onEdit={() => navigate('/service/environment/add')}
+                />
+              ))
+            )}
           </CardContent>
         </Card>
 
@@ -99,7 +101,8 @@ export default function ReviewService() {
         <div className="pt-2">
           <Button
             onClick={handleConfirm}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold"
+            disabled={currentOrder.environments.length === 0}
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold disabled:opacity-50"
           >
             <Send className="w-5 h-5" />
             Confirmar e Enviar
@@ -110,24 +113,49 @@ export default function ReviewService() {
   )
 }
 
-function EnvironmentItem({ name, details, icon, onEdit }: { name: string; details: string; icon: React.ReactNode; onEdit: () => void }) {
+interface EnvironmentItemProps {
+  name: string;
+  details: string;
+  icon: React.ReactNode;
+  photos: string[];
+  onEdit: () => void;
+}
+
+function EnvironmentItem({ name, details, icon, photos, onEdit }: EnvironmentItemProps) {
   return (
-    <div className="flex items-center gap-3 p-2 rounded-2xl border border-slate-50 bg-slate-50/50">
-      <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-sm">
-        {icon}
+    <div className="space-y-3 p-4 rounded-2xl border border-slate-100 bg-slate-50/50">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-sm">
+          {icon}
+        </div>
+        <div className="grow">
+          <h4 className="text-xs font-bold text-slate-800">{name}</h4>
+          <p className="text-[9px] text-slate-500 font-medium uppercase tracking-wider">{details}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onEdit}
+          className="h-7 px-2 text-[10px] font-bold text-primary hover:bg-blue-50"
+        >
+          Editar
+        </Button>
       </div>
-      <div className="grow">
-        <h4 className="text-xs font-bold text-slate-800">{name}</h4>
-        <p className="text-[9px] text-slate-500 font-medium">{details}</p>
+
+      {/* Miniatures */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {photos.map((src, i) => (
+          <div key={i} className="w-12 h-12 rounded-lg bg-white border border-slate-200 shrink-0 overflow-hidden">
+            <img src={src} className="w-full h-full object-cover" alt="Preview" />
+          </div>
+        ))}
+        {photos.length === 0 && (
+          <div className="flex items-center gap-1.5 text-slate-400 text-[9px] italic">
+            <ImageIcon className="w-3 h-3" />
+            Nenhuma foto
+          </div>
+        )}
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={onEdit}
-        className="h-7 px-2 py-1 bg-white border-slate-100 rounded-lg shadow-sm text-[9px] font-bold text-slate-400 uppercase tracking-wider hover:text-primary transition-colors"
-      >
-        Editar
-      </Button>
     </div>
   )
 }

@@ -22,6 +22,7 @@ export interface CreateEquipmentPhoto {
 }
 
 export interface CreateEquipment {
+  name: string;
   protocolType: string;
   designatedSystem: string;
   environmentPhotos: CreateEquipmentPhoto[];

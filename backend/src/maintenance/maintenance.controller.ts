@@ -5,9 +5,13 @@ import { CreateMaintenanceDto, MaintenanceCreateResponseDto } from './dto/create
 import { MaintenanceListResponseDto, PaginationQueryDto } from './dto/list-maintenance.dto';
 import { MaintenanceReportResponseDto } from './dto/report-maintenance.dto';
 
+import { MaintenanceService } from './maintenance.service';
+
 @ApiTags('Maintenance')
 @Controller('maintenance')
 export class MaintenanceController {
+  constructor(private readonly maintenanceService: MaintenanceService) {}
+
   @Get('list')
   @ApiOperation({ summary: 'List all maintenance orders' })
   @ApiResponse({ status: 200, type: MaintenanceListResponseDto })
@@ -31,7 +35,7 @@ export class MaintenanceController {
     { name: 'fault-picture', maxCount: 1 },
     { name: 'equipment-photos', maxCount: 20 },
   ]))
-  createOrder(
+  async createOrder(
     @Body() data: CreateMaintenanceDto,
     @UploadedFiles() files: {
       'frontal-picture'?: Express.Multer.File[],
@@ -40,11 +44,16 @@ export class MaintenanceController {
       'fault-picture'?: Express.Multer.File[],
       'equipment-photos'?: Express.Multer.File[],
     }
-  ): MaintenanceCreateResponseDto {
-    console.log('Received Metadata:', data);
+  ): Promise<MaintenanceCreateResponseDto> {
+    // If the data comes from a Multipart form, 'equipments' will be a string
+    if (typeof data.equipments === 'string') {
+      data.equipments = JSON.parse(data.equipments);
+    }
+
+    const savedOrder = await this.maintenanceService.create(data, files);
     return {
-      id: 'uuid-stub',
-      agency: data.agency,
+      id: savedOrder.id,
+      agency: savedOrder.agency,
     };
   }
 

@@ -1,29 +1,43 @@
+import { maintenanceApi, type MaintenanceItem } from '@/api/maintenance-api'
 import OSItem from '@/components/pages/os-item'
 import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 import { Plus } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export default function History() {
-  const mockServices = [
-    {
-      number: 'OS-24-0891A',
-      description: 'MANUTENÇÃO PREVENTIVA',
-      location: 'Ag. Central Bandeirantes (0192)',
-      date: '14 Out 2023, 08:30'
-    },
-    {
-      number: 'OS-24-0885C',
-      description: 'REPARO CORRETIVO - CHILLER',
-      location: 'Edifício Sede Administrativa',
-      date: '12 Out 2023, 14:15'
-    },
-    {
-      number: 'OS-24-0870B',
-      description: 'INSPEÇÃO DE ROTINA',
-      location: 'Ag. Vila Nova (0441)',
-      date: '05 Out 2023, 09:00'
+  const [services, setServices] = useState<MaintenanceItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        setIsLoading(true)
+        const response = await maintenanceApi.list(0, 50)
+        setServices(response.items)
+      } catch (err: any) {
+        setError('Erro ao carregar o histórico. Tente novamente mais tarde.')
+        console.error('Fetch history error:', err)
+      } finally {
+        setIsLoading(false)
+      }
     }
-  ]
+
+    fetchHistory()
+  }, [])
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
 
   return (
     <div className="flex flex-col min-h-full">
@@ -39,7 +53,7 @@ export default function History() {
         </div>
       </header>
 
-      <div className="p-6 max-w-2xl mx-auto space-y-6">
+      <div className="p-6 max-w-2xl mx-auto space-y-6 w-full">
         <div className="space-y-1 mb-8">
           <h1 className="text-3xl font-bold text-primary">Histórico de Serviços</h1>
           <p className="text-sm text-slate-500 leading-relaxed">
@@ -47,11 +61,33 @@ export default function History() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {mockServices.map((service) => (
-            <OSItem key={service.number} {...service} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <Spinner className="w-8 h-8 text-primary" />
+            <p className="text-sm text-slate-400 font-medium">Carregando histórico...</p>
+          </div>
+        ) : error ? (
+          <div className="p-6 text-center bg-red-50 rounded-3xl border border-red-100">
+            <p className="text-sm text-red-600 font-medium">{error}</p>
+          </div>
+        ) : services.length === 0 ? (
+          <div className="py-6 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+            <p className="text-sm text-slate-400 font-medium">Nenhuma ordem de serviço encontrada.</p>
+
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {services.map((service) => (
+              <OSItem
+                key={service.id}
+                number={service.osNumber}
+                description={service.company || 'Manutenção Geral'}
+                location={service.location}
+                date={formatDate(service.createdAt)}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Floating Action Button */}
         <Link to="/service/new">

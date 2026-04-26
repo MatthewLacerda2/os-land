@@ -1,81 +1,109 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+
+export interface EnvironmentPhoto {
+  label: string;
+  file: File;
+  previewUrl: string;
+}
 
 export interface Environment {
-  id: string
-  name: string
-  equipmentDescription: string
-  maintenanceType: 'preventive' | 'corrective'
-  repairDescription: string
-  evidencePhotos: string[]
+  id: string;
+  name: string;
+  protocolType: string;
+  designatedSystem: string;
+  photos: EnvironmentPhoto[];
 }
 
 export interface ServiceOrder {
-  id: string
-  number: string
-  location: string
-  description: string
-  initialPhotos: string[]
-  environments: Environment[]
-  status: 'draft' | 'completed'
-  createdAt: string
+  osNumber: string;
+  agency: string;
+  state: string;
+  company?: string;
+  latitude: string;
+  longitude: string;
+  description: string;
+  // Main Photos
+  frontalPicture?: File;
+  ticketPicture?: File;
+  condenserPicture?: File;
+  faultPicture?: File;
+  // Previews
+  frontalPreview?: string;
+  ticketPreview?: string;
+  condenserPreview?: string;
+  faultPreview?: string;
+  
+  environments: Environment[];
 }
 
 interface ServiceStore {
-  currentOrder: ServiceOrder | null
-  history: ServiceOrder[]
+  currentOrder: ServiceOrder;
   
   // Actions
-  startNewOrder: () => void
-  updateOrderDetails: (details: Partial<Omit<ServiceOrder, 'id' | 'environments'>>) => void
-  addEnvironment: (env: Omit<Environment, 'id'>) => void
-  removeEnvironment: (id: string) => void
-  completeOrder: () => void
-  resetCurrentOrder: () => void
+  updateOrderDetails: (details: Partial<Omit<ServiceOrder, 'environments'>>) => void;
+  setInitialPhoto: (slot: 'frontal' | 'ticket' | 'condenser' | 'fault', file: File) => void;
+  addEnvironment: (env: Omit<Environment, 'id'>) => void;
+  removeEnvironment: (id: string) => void;
+  resetOrder: () => void;
 }
 
-export const useServiceStore = create<ServiceStore>((set) => ({
-  currentOrder: null,
-  history: [],
+const INITIAL_STATE: ServiceOrder = {
+  osNumber: '',
+  agency: '',
+  state: '',
+  company: '',
+  latitude: '15.7939',
+  longitude: '-47.8828',
+  description: '',
+  environments: [],
+};
 
-  startNewOrder: () => set({
-    currentOrder: {
-      id: Math.random().toString(36).substr(2, 9),
-      number: '',
-      location: '',
-      description: '',
-      initialPhotos: [],
-      environments: [],
-      status: 'draft',
-      createdAt: new Date().toISOString()
-    }
-  }),
+export const useServiceStore = create<ServiceStore>((set) => ({
+  currentOrder: { ...INITIAL_STATE },
 
   updateOrderDetails: (details) => set((state) => ({
-    currentOrder: state.currentOrder ? { ...state.currentOrder, ...details } : null
+    currentOrder: { ...state.currentOrder, ...details }
   })),
 
+  setInitialPhoto: (slot, file) => set((state) => {
+    const previewUrl = URL.createObjectURL(file);
+    const updates: Partial<ServiceOrder> = {};
+    
+    if (slot === 'frontal') {
+      updates.frontalPicture = file;
+      updates.frontalPreview = previewUrl;
+    } else if (slot === 'ticket') {
+      updates.ticketPicture = file;
+      updates.ticketPreview = previewUrl;
+    } else if (slot === 'condenser') {
+      updates.condenserPicture = file;
+      updates.condenserPreview = previewUrl;
+    } else if (slot === 'fault') {
+      updates.faultPicture = file;
+      updates.faultPreview = previewUrl;
+    }
+
+    return {
+      currentOrder: { ...state.currentOrder, ...updates }
+    };
+  }),
+
   addEnvironment: (env) => set((state) => ({
-    currentOrder: state.currentOrder ? {
+    currentOrder: {
       ...state.currentOrder,
-      environments: [...state.currentOrder.environments, { ...env, id: Math.random().toString(36).substr(2, 9) }]
-    } : null
+      environments: [...state.currentOrder.environments, { 
+        ...env, 
+        id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11) 
+      }]
+    }
   })),
 
   removeEnvironment: (id) => set((state) => ({
-    currentOrder: state.currentOrder ? {
+    currentOrder: {
       ...state.currentOrder,
       environments: state.currentOrder.environments.filter(e => e.id !== id)
-    } : null
+    }
   })),
 
-  completeOrder: () => set((state) => {
-    if (!state.currentOrder) return state
-    const completedOrder = { ...state.currentOrder, status: 'completed' as const }
-    return {
-      history: [completedOrder, ...state.history],
-      currentOrder: null
-    }
-  }),
-
-  resetCurrentOrder: () => set({ currentOrder: null })
+  resetOrder: () => set({ currentOrder: { ...INITIAL_STATE } }),
 }))

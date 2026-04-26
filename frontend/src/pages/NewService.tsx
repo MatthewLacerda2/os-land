@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { useServiceStore } from '@/store/useServiceStore'
 import { Camera, ChevronRight, ClipboardList, Info, MapPin } from 'lucide-react'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const BRAZIL_STATES = [
@@ -41,22 +40,24 @@ const BRAZIL_STATES = [
 
 export default function NewService() {
   const navigate = useNavigate()
-  const { currentOrder, updateOrderDetails, startNewOrder } = useServiceStore()
-  const [previews, setPreviews] = useState<Record<string, string>>({})
-
-  // Initialize order if not exists
-  if (!currentOrder) {
-    startNewOrder()
-  }
+  const { currentOrder, updateOrderDetails, setInitialPhoto } = useServiceStore()
 
   const handleFileSelect = (slot: string, file: File | null) => {
     if (file) {
-      const url = URL.createObjectURL(file)
-      setPreviews(prev => ({ ...prev, [slot]: url }))
+      // Map 'label' UI ID to 'ticket' store slot
+      const storeSlot = slot === 'label' ? 'ticket' : slot as any;
+      setInitialPhoto(storeSlot, file);
     }
   }
 
   const handleNext = () => {
+    const { frontalPicture, ticketPicture, condenserPicture, faultPicture } = currentOrder;
+    
+    if (!frontalPicture || !ticketPicture || !condenserPicture || !faultPicture) {
+      alert('Por favor, capture as 4 fotos iniciais obrigatórias antes de prosseguir.');
+      return;
+    }
+
     navigate('/service/environment/add')
   }
 
@@ -86,8 +87,8 @@ export default function NewService() {
                   id="osNumber"
                   className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
                   placeholder="ex: OS-2023-8912"
-                  value={currentOrder?.number || ''}
-                  onChange={(e) => updateOrderDetails({ number: e.target.value })}
+                  value={currentOrder.osNumber}
+                  onChange={(e) => updateOrderDetails({ osNumber: e.target.value })}
                 />
               </div>
 
@@ -97,14 +98,17 @@ export default function NewService() {
                   id="agencyCode"
                   className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
                   placeholder="ID da Agência"
-                  value={currentOrder?.location || ''}
-                  onChange={(e) => updateOrderDetails({ location: e.target.value })}
+                  value={currentOrder.agency}
+                  onChange={(e) => updateOrderDetails({ agency: e.target.value })}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Estado/UF</Label>
-                <Select>
+                <Select
+                  value={currentOrder.state}
+                  onValueChange={(val) => updateOrderDetails({ state: val })}
+                >
                   <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-slate-200">
                     <SelectValue placeholder="Selecionar Região" />
                   </SelectTrigger>
@@ -127,6 +131,8 @@ export default function NewService() {
                   id="company"
                   className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
                   placeholder="Contratante / Cliente"
+                  value={currentOrder.company}
+                  onChange={(e) => updateOrderDetails({ company: e.target.value })}
                 />
               </div>
 
@@ -136,7 +142,7 @@ export default function NewService() {
                   id="description"
                   className="min-h-[100px] rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
                   placeholder="Descreva a falha detectada, sintomas e quaisquer observações visuais imediatas..."
-                  value={currentOrder?.description || ''}
+                  value={currentOrder.description}
                   onChange={(e) => updateOrderDetails({ description: e.target.value })}
                 />
               </div>
@@ -160,28 +166,28 @@ export default function NewService() {
               id="frontal"
               label="Vista Frontal"
               icon={<Camera className="w-6 h-6" />}
-              preview={previews.frontal}
+              preview={currentOrder.frontalPreview}
               onSelect={(file) => handleFileSelect('frontal', file)}
             />
             <PhotoPlaceholder
               id="label"
               label="Dados da Etiqueta"
               icon={<ClipboardList className="w-6 h-6" />}
-              preview={previews.label}
+              preview={currentOrder.ticketPreview}
               onSelect={(file) => handleFileSelect('label', file)}
             />
             <PhotoPlaceholder
               id="condenser"
               label="Condensadora"
               icon={<MapPin className="w-6 h-6" />}
-              preview={previews.condenser}
+              preview={currentOrder.condenserPreview}
               onSelect={(file) => handleFileSelect('condenser', file)}
             />
             <PhotoPlaceholder
               id="fault"
               label="Falha Detectada"
               icon={<Info className="w-6 h-6" />}
-              preview={previews.fault}
+              preview={currentOrder.faultPreview}
               onSelect={(file) => handleFileSelect('fault', file)}
             />
           </div>

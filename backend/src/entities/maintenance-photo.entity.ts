@@ -16,11 +16,8 @@ export class MaintenancePhoto {
   @Column()
   path: string;
 
-  @Column({
-    type: 'enum',
-    enum: MaintenancePhotoType,
-  })
-  label: MaintenancePhotoType;
+  @Column()
+  label: string;
 
   @ManyToOne(() => EnvironmentService, (service) => service.photos, { onDelete: 'CASCADE' })
   environmentService: EnvironmentService;
