@@ -41,7 +41,7 @@ export default function ReviewService() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/service/new')}
+              onClick={() => navigate('/service/new', { state: { fromReview: true } })}
               className="w-8 h-8 bg-slate-50 rounded-full text-primary hover:bg-blue-50 transition-colors"
             >
               <Pencil className="w-3.5 h-3.5" />

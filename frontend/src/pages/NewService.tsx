@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { useServiceStore } from '@/store/useServiceStore'
 import { Camera, ChevronRight, ClipboardList, Info, MapPin } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const BRAZIL_STATES = [
   { value: 'ac', label: 'Acre (AC)' },
@@ -40,7 +40,10 @@ const BRAZIL_STATES = [
 
 export default function NewService() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { currentOrder, updateOrderDetails, setInitialPhoto } = useServiceStore()
+
+  const isEditing = location.state?.fromReview
 
   const handleFileSelect = (slot: string, file: File | null) => {
     if (file) {
@@ -58,7 +61,11 @@ export default function NewService() {
       return;
     }
 
-    navigate('/service/environment/add')
+    if (isEditing) {
+      navigate('/service/review')
+    } else {
+      navigate('/service/environment/add')
+    }
   }
 
   return (
