@@ -17,7 +17,10 @@ export class MaintenanceOrder {
   longitude: string;
 
   @Column()
-  location: string;
+  agency: string;
+
+  @Column()
+  state: string;
 
   @Column()
   company: string;

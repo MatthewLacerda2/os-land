@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { EnvironmentService } from './environment-service.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EnvironmentPhoto } from './environment-photo.entity';
+import { EnvironmentService } from './environment-service.entity';
 
 export enum DesignatedSystem {
   SPLIT = 'split',
