@@ -94,11 +94,11 @@ export const maintenanceApi = {
       equipments: processedEquipments,
     };
 
-    Object.keys(metadata).forEach(key => {
+    Object.entries(metadata).forEach(([key, value]) => {
       if (key === 'equipments') {
-        formData.append(key, JSON.stringify(metadata[key]));
-      } else {
-        formData.append(key, metadata[key] as string);
+        formData.append(key, JSON.stringify(value));
+      } else if (value !== undefined) {
+        formData.append(key, value as string);
       }
     });
 
