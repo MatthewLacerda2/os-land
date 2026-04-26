@@ -6,6 +6,8 @@ import { EnvironmentService } from './entities/environment-service.entity';
 import { Environment } from './entities/environment.entity';
 import { MaintenanceOrder } from './entities/maintenance-order.entity';
 import { User } from './entities/user.entity';
+import { MaintenancePhoto } from './entities/maintenance-photo.entity';
+import { EnvironmentPhoto } from './entities/environment-photo.entity';
 
 @Module({
   imports: [
@@ -16,8 +18,15 @@ import { User } from './entities/user.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, MaintenanceOrder, Environment, EnvironmentService],
-      synchronize: true, // Only for development/POC - auto-creates tables
+      entities: [
+        User, 
+        MaintenanceOrder, 
+        Environment, 
+        EnvironmentService, 
+        MaintenancePhoto, 
+        EnvironmentPhoto
+      ],
+      synchronize: true,
     }),
   ],
   controllers: [AppController],

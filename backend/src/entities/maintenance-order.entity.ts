@@ -2,12 +2,12 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerate
 import { EnvironmentService } from './environment-service.entity';
 import { User } from './user.entity';
 
-@Entity()
+@Entity('maintenance_orders')
 export class MaintenanceOrder {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ name: 'os_number' })
   osNumber: string;
 
   @Column()
@@ -25,10 +25,10 @@ export class MaintenanceOrder {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @Column('simple-array', { nullable: true })
+  @Column('simple-array', { nullable: true, name: 'initial_photos' })
   initialPhotos: string[];
 
   @ManyToOne(() => User, (user) => user.orders)

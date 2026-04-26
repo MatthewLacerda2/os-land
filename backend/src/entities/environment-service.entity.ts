@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { MaintenanceOrder } from './maintenance-order.entity';
 import { Environment } from './environment.entity';
+import { MaintenancePhoto } from './maintenance-photo.entity';
 
 @Entity('environment_services')
 export class EnvironmentService {
@@ -13,6 +14,6 @@ export class EnvironmentService {
   @ManyToOne(() => Environment, (env) => env.services)
   environment: Environment;
 
-  @Column('simple-array', { nullable: true, name: 'verification_photos' })
-  verificationPhotos: string[];
+  @OneToMany(() => MaintenancePhoto, (photo) => photo.environmentService)
+  photos: MaintenancePhoto[];
 }

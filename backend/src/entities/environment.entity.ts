@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { EnvironmentService } from './environment-service.entity';
+import { EnvironmentPhoto } from './environment-photo.entity';
 
 export enum DesignatedSystem {
   SPLIT = 'split',
@@ -39,4 +40,7 @@ export class Environment {
 
   @OneToMany(() => EnvironmentService, (envService) => envService.environment)
   services: EnvironmentService[];
+
+  @OneToMany(() => EnvironmentPhoto, (photo) => photo.environment)
+  photos: EnvironmentPhoto[];
 }
