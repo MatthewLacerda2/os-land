@@ -29,6 +29,10 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_NAME=${DB_NAME:-os_land}
       - PORT=3000
+      - JWT_SECRET=${JWT_SECRET}
+      - ROOT_USER_NAME=${ROOT_USER_NAME}
+      - EMAIL=${EMAIL}
+      - PASSWORD=${PASSWORD}
     ports:
       - "3000:3000"
     volumes:
