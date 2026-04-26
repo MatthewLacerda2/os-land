@@ -43,6 +43,7 @@ export class SeedService implements OnApplicationBootstrap {
         name,
         email,
         password,
+        password_confirmation: password,
         role: UserRole.MANAGER,
       });
 

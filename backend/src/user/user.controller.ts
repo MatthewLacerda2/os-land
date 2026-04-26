@@ -21,12 +21,7 @@ export class UserController {
   @ApiOperation({ summary: 'Create a new user (Manager only)' })
   @ApiResponse({ status: 201, type: UserResponseDto })
   async createUser(@Body() data: CreateUserDto): Promise<UserResponseDto> {
-    const user = await this.userService.create({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      role: data.role,
-    });
+    const user = await this.userService.create(data);
     
     return {
       id: user.id,
