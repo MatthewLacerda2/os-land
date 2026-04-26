@@ -1,0 +1,17 @@
+# Security
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+auxts.ts
+envcopy.py
