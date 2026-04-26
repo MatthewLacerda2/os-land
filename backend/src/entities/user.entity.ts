@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MaintenanceOrder } from './maintenance-order.entity';
 
 export enum UserRole {
@@ -19,6 +19,9 @@ export class User {
 
   @Column()
   name: string;
+
+  @Column()
+  is_active: boolean;
 
   @Column({
     type: 'enum',

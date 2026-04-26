@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Matches, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsString, Matches, MinLength } from 'class-validator';
+import { UserRole } from '../../entities/user.entity';
 
-export class CreateTechnicianDto {
+export class CreateUserDto {
   @ApiProperty({ example: 'João Silva', description: 'At least 3 characters, no numbers/special chars' })
   @IsString()
   @MinLength(3)
@@ -22,10 +23,14 @@ export class CreateTechnicianDto {
   @ApiProperty({ example: 'Must be identical to password' })
   @IsString()
   @MinLength(6)
-  password_confirmation: string
+  password_confirmation: string;
+
+  @ApiProperty({ enum: UserRole, example: UserRole.TECHNICIAN })
+  @IsEnum(UserRole)
+  role: UserRole;
 }
 
-export class TechnicianResponseDto {
+export class UserResponseDto {
   @ApiProperty()
   id: string;
 
@@ -34,4 +39,7 @@ export class TechnicianResponseDto {
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty({ enum: UserRole })
+  role: UserRole;
 }

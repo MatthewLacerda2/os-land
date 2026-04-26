@@ -7,7 +7,7 @@ export class MaintenanceOrder {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'os_number' })
+  @Column({ name: 'os_number', unique: true })
   osNumber: string;
 
   @Column()

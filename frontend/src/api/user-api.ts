@@ -1,16 +1,20 @@
 import client from './client';
 
-export interface CreateTechnicianRequest {
+export type UserRole = 'manager' | 'technician';
+
+export interface CreateUserRequest {
   name: string;
   email: string;
   password: string;
   password_confirmation: string;
+  role: UserRole;
 }
 
-export interface TechnicianResponse {
+export interface UserResponse {
   id: string;
   name: string;
   email: string;
+  role: UserRole;
 }
 
 export interface LoginRequest {
@@ -26,8 +30,8 @@ export interface LoginResponse {
 }
 
 export const userApi = {
-  createTechnician: async (data: CreateTechnicianRequest): Promise<TechnicianResponse> => {
-    const response = await client.post('/user/create/technician', data);
+  createUser: async (data: CreateUserRequest): Promise<UserResponse> => {
+    const response = await client.post('/user/create', data);
     return response.data;
   },
 
