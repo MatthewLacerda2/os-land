@@ -9,6 +9,8 @@ import { Environment } from './entities/environment.entity';
 import { MaintenanceOrder } from './entities/maintenance-order.entity';
 import { MaintenancePhoto } from './entities/maintenance-photo.entity';
 import { User } from './entities/user.entity';
+import { MaintenanceModule } from './maintenance/maintenance.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { User } from './entities/user.entity';
       ],
       synchronize: true,
     }),
+    UserModule,
+    MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
