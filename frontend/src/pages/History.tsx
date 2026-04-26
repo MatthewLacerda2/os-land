@@ -1,4 +1,7 @@
 import OSItem from '@/components/pages/os-item'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function History() {
   const mockServices = [
@@ -37,26 +40,28 @@ export default function History() {
       </header>
 
       <div className="p-6 max-w-2xl mx-auto space-y-6">
-      <div className="space-y-1 mb-8">
-        <h1 className="text-3xl font-bold text-primary">Histórico de Serviços</h1>
-        <p className="text-sm text-slate-500 leading-relaxed">
-          Registro completo de ordens de serviço executadas, documentação técnica e status de aprovação.
-        </p>
-      </div>
+        <div className="space-y-1 mb-8">
+          <h1 className="text-3xl font-bold text-primary">Histórico de Serviços</h1>
+          <p className="text-sm text-slate-500 leading-relaxed">
+            Registro completo de ordens de serviço executadas, documentação técnica e status de aprovação.
+          </p>
+        </div>
 
-      <div className="flex flex-col gap-4">
-        {mockServices.map((service) => (
-          <OSItem key={service.number} {...service} />
-        ))}
-      </div>
-      
-      {/* Floating Action Button */}
-      <a 
-        href="/service/new" 
-        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-primary-dark transition-all active:scale-90 z-40"
-      >
-        <span className="text-3xl font-light">+</span>
-      </a>
+        <div className="flex flex-col gap-4">
+          {mockServices.map((service) => (
+            <OSItem key={service.number} {...service} />
+          ))}
+        </div>
+
+        {/* Floating Action Button */}
+        <Link to="/service/new">
+          <Button
+            size="icon"
+            className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-primary/90 transition-all active:scale-90 z-40"
+          >
+            <Plus className="w-8 h-8 font-light" />
+          </Button>
+        </Link>
       </div>
     </div>
   )

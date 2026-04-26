@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Building2,
   Monitor,
@@ -28,18 +29,20 @@ export default function ReviewService() {
 
       <div className="px-6 space-y-4">
         {/* General Info Section */}
-        <section className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-slate-800">Informações Gerais</h3>
-            <button
+        <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden">
+          <CardHeader className="flex flex-row justify-between items-center p-5 pb-2">
+            <CardTitle className="text-lg font-bold text-slate-800">Informações Gerais</CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => navigate('/service/new')}
-              className="w-8 h-8 bg-slate-50 rounded-full flex items-center justify-center text-primary hover:bg-blue-50 transition-colors"
+              className="w-8 h-8 bg-slate-50 rounded-full text-primary hover:bg-blue-50 transition-colors"
             >
               <Pencil className="w-3.5 h-3.5" />
-            </button>
-          </div>
+            </Button>
+          </CardHeader>
 
-          <div className="grid gap-4">
+          <CardContent className="p-5 pt-2 grid gap-4">
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Número da OS</p>
               <p className="text-sm font-bold text-slate-700">OS-2023-8842</p>
@@ -52,23 +55,25 @@ export default function ReviewService() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">UF</p>
               <p className="text-sm font-bold text-slate-700">SP</p>
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Environments Section */}
-        <section className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-slate-800">Ambientes</h3>
-            <button
+        <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden">
+          <CardHeader className="flex flex-row justify-between items-center p-5 pb-2">
+            <CardTitle className="text-lg font-bold text-slate-800">Ambientes</CardTitle>
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => navigate('/service/environment/add')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-primary rounded-full text-[10px] font-bold hover:bg-blue-100 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-primary rounded-full text-[10px] font-bold hover:bg-blue-100 transition-colors h-7"
             >
               <Plus className="w-3 h-3" />
               Adicionar
-            </button>
-          </div>
+            </Button>
+          </CardHeader>
 
-          <div className="space-y-2">
+          <CardContent className="p-5 pt-2 space-y-2">
             <EnvironmentItem
               name="Server Room A"
               details="2 Unidades HVAC"
@@ -87,14 +92,14 @@ export default function ReviewService() {
               icon={<Monitor className="w-5 h-5" />}
               onEdit={() => navigate('/service/environment/add')}
             />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Final Action Button */}
         <div className="pt-2">
           <Button
             onClick={handleConfirm}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary-dark text-white shadow-xl gap-3 text-base font-bold"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold"
           >
             <Send className="w-5 h-5" />
             Confirmar e Enviar
@@ -115,12 +120,14 @@ function EnvironmentItem({ name, details, icon, onEdit }: { name: string; detail
         <h4 className="text-xs font-bold text-slate-800">{name}</h4>
         <p className="text-[9px] text-slate-500 font-medium">{details}</p>
       </div>
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         onClick={onEdit}
-        className="px-2 py-1 bg-white border border-slate-100 rounded-lg shadow-sm text-[9px] font-bold text-slate-400 uppercase tracking-wider hover:text-primary transition-colors"
+        className="h-7 px-2 py-1 bg-white border-slate-100 rounded-lg shadow-sm text-[9px] font-bold text-slate-400 uppercase tracking-wider hover:text-primary transition-colors"
       >
         Editar
-      </button>
+      </Button>
     </div>
   )
 }

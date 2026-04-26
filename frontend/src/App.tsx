@@ -6,6 +6,8 @@ import NewService from './pages/NewService'
 import ReviewService from './pages/ReviewService'
 
 import MaintenanceView from './pages/MaintenanceView'
+import Login from './pages/Login'
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
@@ -15,12 +17,14 @@ function App() {
           {/* Main Content */}
           <main className="grow pb-24">
             <Routes>
+              <Route path="/login" element={<Login />} />
               <Route path="/" element={<History />} />
               <Route path="/service/new" element={<NewService />} />
               <Route path="/service/environment/add" element={<AddEnvironment />} />
               <Route path="/service/review" element={<ReviewService />} />
               <Route path="/service/view" element={<MaintenanceView />} />
               <Route path="/service/complete" element={<Complete />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
 

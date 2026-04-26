@@ -1,4 +1,6 @@
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -76,68 +78,70 @@ export default function NewService() {
             <h3 className="font-bold uppercase tracking-wider text-xs">Identificação do Serviço</h3>
           </div>
 
-          <div className="grid gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="osNumber">Número da OS</Label>
-              <input
-                id="osNumber"
-                className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                placeholder="ex: OS-2023-8912"
-                value={currentOrder?.number || ''}
-                onChange={(e) => updateOrderDetails({ number: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="agencyCode">Código da Agência</Label>
-              <input
-                id="agencyCode"
-                className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                placeholder="ID da Agência"
-                value={currentOrder?.location || ''}
-                onChange={(e) => updateOrderDetails({ location: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Estado/UF</Label>
-              <Select>
-                <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-slate-200">
-                  <SelectValue placeholder="Selecionar Região" />
-                </SelectTrigger>
-                <SelectContent>
-                  {BRAZIL_STATES.map((state) => (
-                    <SelectItem key={state.value} value={state.value}>
-                      {state.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <Label htmlFor="company">Empresa</Label>
-                <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+          <Card className="border-slate-100 shadow-sm rounded-3xl overflow-hidden">
+            <CardContent className="grid gap-5 pt-6">
+              <div className="space-y-2">
+                <Label htmlFor="osNumber">Número da OS</Label>
+                <Input
+                  id="osNumber"
+                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  placeholder="ex: OS-2023-8912"
+                  value={currentOrder?.number || ''}
+                  onChange={(e) => updateOrderDetails({ number: e.target.value })}
+                />
               </div>
-              <input
-                id="company"
-                className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                placeholder="Contratante / Cliente"
-              />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Descrição da Falha</Label>
-              <Textarea
-                id="description"
-                className="min-h-[100px] rounded-xl bg-slate-50 border-slate-200"
-                placeholder="Descreva a falha detectada, sintomas e quaisquer observações visuais imediatas..."
-                value={currentOrder?.description || ''}
-                onChange={(e) => updateOrderDetails({ description: e.target.value })}
-              />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="agencyCode">Código da Agência</Label>
+                <Input
+                  id="agencyCode"
+                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  placeholder="ID da Agência"
+                  value={currentOrder?.location || ''}
+                  onChange={(e) => updateOrderDetails({ location: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Estado/UF</Label>
+                <Select>
+                  <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-slate-200">
+                    <SelectValue placeholder="Selecionar Região" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BRAZIL_STATES.map((state) => (
+                      <SelectItem key={state.value} value={state.value}>
+                        {state.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <Label htmlFor="company">Empresa</Label>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+                </div>
+                <Input
+                  id="company"
+                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  placeholder="Contratante / Cliente"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descrição da Falha</Label>
+                <Textarea
+                  id="description"
+                  className="min-h-[100px] rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  placeholder="Descreva a falha detectada, sintomas e quaisquer observações visuais imediatas..."
+                  value={currentOrder?.description || ''}
+                  onChange={(e) => updateOrderDetails({ description: e.target.value })}
+                />
+              </div>
+            </CardContent>
+          </Card>
         </section>
 
         {/* Initial Photos Section */}
@@ -187,7 +191,7 @@ export default function NewService() {
         <div className="flex justify-end pt-4">
           <Button
             onClick={handleNext}
-            className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary-dark text-white shadow-lg gap-2 text-base font-bold"
+            className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-lg gap-2 text-base font-bold"
           >
             Próximo
             <ChevronRight className="w-5 h-5" />
@@ -217,7 +221,7 @@ function PhotoPlaceholder({ id, label, icon, preview, onSelect }: PhotoPlacehold
       className={`aspect-square rounded-2xl border-2 transition-all cursor-pointer overflow-hidden relative group ${preview ? 'border-primary shadow-md' : 'border-dashed border-slate-200 bg-slate-50 hover:border-primary text-slate-400 hover:text-primary'
         }`}
     >
-      <input
+      <Input
         type="file"
         id={`file-${id}`}
         className="hidden"

@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Building2,
   Camera,
@@ -19,12 +20,14 @@ export default function MaintenanceView() {
     <div className="flex flex-col min-h-full bg-slate-50/50 pb-10">
       {/* Page Header */}
       <div className="p-6 flex items-center gap-4">
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           onClick={() => navigate(-1)}
-          className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 shadow-sm border border-slate-100"
+          className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 shadow-sm border-slate-100"
         >
           <ChevronLeft className="w-5 h-5" />
-        </button>
+        </Button>
         <div>
           <h2 className="text-2xl font-bold text-primary">Detalhes da Manutenção</h2>
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">OS-2023-8842</p>
@@ -33,9 +36,11 @@ export default function MaintenanceView() {
 
       <div className="px-6 space-y-6">
         {/* General Info Section (Read Only) */}
-        <section className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
-          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Informações Gerais</h3>
-          <div className="grid grid-cols-2 gap-4">
+        <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-sm font-bold text-slate-800 uppercase tracking-wider">Informações Gerais</CardTitle>
+          </CardHeader>
+          <CardContent className="p-5 pt-2 grid grid-cols-2 gap-4">
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Localização</p>
               <p className="text-sm font-bold text-slate-700">Agência Central - 0192</p>
@@ -44,8 +49,8 @@ export default function MaintenanceView() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Data/Hora</p>
               <p className="text-sm font-bold text-slate-700">14 Out 2023, 08:30</p>
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Detailed Environments List */}
         <div className="space-y-4">
@@ -90,7 +95,7 @@ export default function MaintenanceView() {
 
 function MaintenanceDetailCard({ name, system, protocol, icon }: { name: string; system: string; protocol: string; icon: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-5">
+    <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden bg-white p-5 space-y-5">
       {/* Header Info */}
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-md">
@@ -123,7 +128,7 @@ function MaintenanceDetailCard({ name, system, protocol, icon }: { name: string;
           <PhotoMiniPlaceholder icon={<CheckCircle2 className="w-3 h-3" />} />
         </div>
       </div>
-    </div>
+    </Card>
   )
 }
 

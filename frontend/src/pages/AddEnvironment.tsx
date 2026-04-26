@@ -1,4 +1,7 @@
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Calendar,
   Camera,
@@ -7,7 +10,8 @@ import {
   Settings,
   Waves,
   Wrench,
-  Zap
+  Zap,
+  MapPin
 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -45,6 +49,7 @@ const PHOTO_TASKS: Record<SystemType, PhotoTask[]> = {
 
 export default function AddEnvironment() {
   const navigate = useNavigate()
+  const [envName, setEnvName] = useState('')
   const [protocol, setProtocol] = useState<ProtocolType>('Corretiva')
   const [system, setSystem] = useState<SystemType>('Split')
   const [taskPreviews, setTaskPreviews] = useState<Record<string, string>>({})
@@ -73,6 +78,24 @@ export default function AddEnvironment() {
       </div>
 
       <div className="px-6 space-y-10">
+        {/* Environment Identification */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 text-primary">
+            <MapPin className="w-4 h-4" />
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em]">Identificação do Ambiente</h3>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="envName" className="ml-1 text-slate-500">Nome do Local / Sala</Label>
+            <Input
+              id="envName"
+              value={envName}
+              onChange={(e) => setEnvName(e.target.value)}
+              placeholder="ex: Sala de Servidores A"
+              className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+            />
+          </div>
+        </section>
+
         {/* Maintenance Protocol Toggle */}
         <section className="space-y-4">
           <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
@@ -80,22 +103,26 @@ export default function AddEnvironment() {
             Protocolo de Manutenção
           </h3>
           <div className="bg-slate-100 p-1 rounded-2xl flex gap-1">
-            <button
+            <Button
+              variant={protocol === 'Corretiva' ? 'default' : 'ghost'}
               onClick={() => setProtocol('Corretiva')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${protocol === 'Corretiva' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
-                }`}
+              className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${
+                protocol === 'Corretiva' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
+              }`}
             >
               <Wrench className="w-4 h-4" />
               Corretiva
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={protocol === 'Preventiva' ? 'default' : 'ghost'}
               onClick={() => setProtocol('Preventiva')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${protocol === 'Preventiva' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
-                }`}
+              className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${
+                protocol === 'Preventiva' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
+              }`}
             >
               <Calendar className="w-4 h-4" />
               Preventiva
-            </button>
+            </Button>
           </div>
         </section>
 
@@ -107,19 +134,21 @@ export default function AddEnvironment() {
           </h3>
           <div className="flex flex-wrap gap-2">
             {(['Split', 'Self', 'Splitão'] as SystemType[]).map((type) => (
-              <button
+              <Button
                 key={type}
+                variant={system === type ? 'default' : 'secondary'}
                 onClick={() => {
                   setSystem(type)
                   setTaskPreviews({})
                 }}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${system === type
-                  ? 'bg-primary text-white shadow-md scale-105'
-                  : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
-                  }`}
+                className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${
+                  system === type
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
               >
                 {type}
-              </button>
+              </Button>
             ))}
           </div>
         </section>
@@ -136,17 +165,18 @@ export default function AddEnvironment() {
               const previewUrl = taskPreviews[task.id]
               return (
                 <div key={task.id}>
-                  <input 
-                    type="file" 
-                    id={`file-${task.id}`} 
-                    className="hidden" 
+                  <input
+                    type="file"
+                    id={`file-${task.id}`}
+                    className="hidden"
                     accept="image/*"
                     onChange={(e) => handleFileSelect(task.id, e.target.files?.[0] || null)}
                   />
-                  <div
+                  <Card
                     onClick={() => triggerFilePicker(task.id)}
-                    className={`group bg-slate-50 rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer ${previewUrl ? 'border-primary bg-blue-50/30 shadow-sm' : 'border-transparent hover:border-slate-200'
-                      }`}
+                    className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${
+                      previewUrl ? 'border-primary bg-blue-50/30' : 'border-transparent bg-slate-50 hover:border-slate-200'
+                    }`}
                   >
                     <div className="w-12 h-12 bg-white text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                       {task.icon}
@@ -155,15 +185,16 @@ export default function AddEnvironment() {
                       <h4 className="text-sm font-bold text-slate-800 tracking-tight">{task.label}</h4>
                       <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{task.description}</p>
                     </div>
-                    <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${previewUrl ? 'border-2 border-primary shadow-md' : 'bg-slate-100 text-slate-300 rounded-full'
-                      }`}>
+                    <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${
+                      previewUrl ? 'border-2 border-primary shadow-md' : 'bg-slate-100 text-slate-300 rounded-full'
+                    }`}>
                       {previewUrl ? (
                         <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
                         <Camera className="w-4 h-4" />
                       )}
                     </div>
-                  </div>
+                  </Card>
                 </div>
               )
             })}
@@ -174,7 +205,7 @@ export default function AddEnvironment() {
         <div className="pt-4">
           <Button
             onClick={handleSave}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary-dark text-white shadow-xl gap-3 text-base font-bold"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold"
           >
             <CheckCircle2 className="w-5 h-5" />
             Salvar Ambiente
