@@ -28,6 +28,7 @@ export class AuthService {
 
     const payload = { email: user.email, sub: user.id, role: user.role };
     return {
+      id: user.id,
       name: user.name,
       email: user.email,
       login_at: new Date().toISOString(),

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { DesignatedSystem, ProtocolType } from '../../entities/environment.entity';
 
@@ -78,11 +78,37 @@ export class CreateMaintenanceDto {
   description: string;
 
   @ApiProperty({ type: [CreateEquipmentDto] })
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return value;
+      }
+    }
+    return value;
+  })
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => CreateEquipmentDto)
   equipments: CreateEquipmentDto[];
+
+  // These fields are handled by the file interceptor but might appear in the body
+  @IsOptional()
+  'frontal-picture'?: any;
+
+  @IsOptional()
+  'ticket-picture'?: any;
+
+  @IsOptional()
+  'condenser-picture'?: any;
+
+  @IsOptional()
+  'fault-picture'?: any;
+
+  @IsOptional()
+  'equipment-photos'?: any;
 }
 
 export class MaintenanceCreateResponseDto {

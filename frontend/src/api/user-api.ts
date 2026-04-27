@@ -23,6 +23,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
+  id: string;
   name: string;
   email: string;
   login_at: string;

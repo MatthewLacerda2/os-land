@@ -1,15 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Repository } from 'typeorm';
-import { MaintenanceOrder } from '../entities/maintenance-order.entity';
-import { Environment } from '../entities/environment.entity';
 import { EnvironmentService } from '../entities/environment-service.entity';
+import { Environment } from '../entities/environment.entity';
+import { MaintenanceOrder } from '../entities/maintenance-order.entity';
 import { MaintenancePhoto } from '../entities/maintenance-photo.entity';
 import { User } from '../entities/user.entity';
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
-import * as fs from 'fs';
-import * as path from 'path';
-import { randomUUID } from 'crypto';
 
 @Injectable()
 export class MaintenanceService {
@@ -36,9 +36,10 @@ export class MaintenanceService {
       'equipment-photos'?: Express.Multer.File[];
     },
   ) {
-    const technician = await this.userRepo.findOneBy({ id: data.technicianId });
-    if (!technician) {
-      throw new NotFoundException('Technician not found');
+    console.log("Creator id: " + data.technicianId)
+    const creator = await this.userRepo.findOneBy({ id: data.technicianId });
+    if (!creator) {
+      throw new NotFoundException('User not found');
     }
 
     const uploadDir = path.join(process.cwd(), 'uploads');
@@ -46,19 +47,21 @@ export class MaintenanceService {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // Save initial photos
+    // Save initial photos (Mandatory 4 photos)
     const initialPhotos: string[] = [];
     const mainPhotoKeys = ['frontal-picture', 'ticket-picture', 'condenser-picture', 'fault-picture'];
     
     for (const key of mainPhotoKeys) {
       const fileArr = files[key];
-      if (fileArr && fileArr.length > 0) {
-        const file = fileArr[0];
-        const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
-        const filePath = path.join(uploadDir, fileName);
-        fs.writeFileSync(filePath, file.buffer);
-        initialPhotos.push(fileName);
+      if (!fileArr || fileArr.length === 0) {
+        throw new BadRequestException(`A foto obrigatória '${key}' está faltando.`);
       }
+      
+      const file = fileArr[0];
+      const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
+      const filePath = path.join(uploadDir, fileName);
+      fs.writeFileSync(filePath, file.buffer);
+      initialPhotos.push(fileName);
     }
 
     // Create Order
@@ -70,7 +73,7 @@ export class MaintenanceService {
       latitude: data.latitude,
       longitude: data.longitude,
       description: data.description,
-      technician,
+      technician: creator,
       initialPhotos,
     });
 

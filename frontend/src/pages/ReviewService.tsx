@@ -2,25 +2,67 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Building2,
+  Image as ImageIcon,
+  Loader2,
   Pencil,
   Plus,
   Send,
   Server
 } from 'lucide-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { maintenanceApi, type CreateMaintenanceRequest } from '@/api/maintenance-api'
 import { useServiceStore } from '@/store/useServiceStore'
-import {
-  Image as ImageIcon
-} from 'lucide-react'
 
 export default function ReviewService() {
   const navigate = useNavigate()
-  const { currentOrder } = useServiceStore()
+  const { currentOrder, resetOrder } = useServiceStore()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleConfirm = () => {
-    console.log('Final Order Data:', currentOrder)
-    navigate('/service/complete')
+  const handleConfirm = async () => {
+    // Get real user ID from localStorage
+    const storedUser = localStorage.getItem('os_land_user')
+    const user = storedUser ? JSON.parse(storedUser) : null
+    const userId = user?.id || '00000000-0000-0000-0000-000000000000'
+
+    setIsSubmitting(true)
+    try {
+      // Map store data to API request format
+      const payload: CreateMaintenanceRequest = {
+        technicianId: userId,
+        osNumber: currentOrder.osNumber,
+        agency: currentOrder.agency,
+        state: currentOrder.state,
+        company: currentOrder.company,
+        latitude: currentOrder.latitude,
+        longitude: currentOrder.longitude,
+        description: currentOrder.description,
+        frontalPicture: currentOrder.frontalPicture!,
+        ticketPicture: currentOrder.ticketPicture!,
+        condenserPicture: currentOrder.condenserPicture!,
+        faultPicture: currentOrder.faultPicture!,
+        equipments: currentOrder.environments.map((env) => ({
+          name: env.name,
+          protocolType: env.protocolType,
+          designatedSystem: env.designatedSystem,
+          environmentPhotos: env.photos.map((p, idx) => ({
+            label: p.label,
+            file: p.file,
+            fileKey: `temp_${idx}` // The API utility will re-generate unique keys
+          }))
+        }))
+      };
+
+      await maintenanceApi.create(payload);
+      resetOrder();
+      navigate('/service/complete');
+    } catch (error) {
+      console.error('Failed to create maintenance order:', error);
+      alert('Ocorreu um erro ao enviar a ordem de serviço. Verifique sua conexão e tente novamente.');
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -101,11 +143,15 @@ export default function ReviewService() {
         <div className="pt-2">
           <Button
             onClick={handleConfirm}
-            disabled={currentOrder.environments.length === 0}
+            disabled={currentOrder.environments.length === 0 || isSubmitting}
             className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold disabled:opacity-50"
           >
-            <Send className="w-5 h-5" />
-            Confirmar e Enviar
+            {isSubmitting ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Send className="w-5 h-5" />
+            )}
+            {isSubmitting ? 'Enviando...' : 'Confirmar e Enviar'}
           </Button>
         </div>
       </div>

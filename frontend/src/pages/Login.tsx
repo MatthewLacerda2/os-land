@@ -23,6 +23,7 @@ const Login: React.FC = () => {
       const response = await userApi.login({ email, password });
       localStorage.setItem('os_land_token', response.jwt);
       localStorage.setItem('os_land_user', JSON.stringify({
+        id: response.id,
         name: response.name,
         email: response.email
       }));

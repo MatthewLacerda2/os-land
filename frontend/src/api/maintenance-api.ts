@@ -65,11 +65,6 @@ export const maintenanceApi = {
   create: async (data: CreateMaintenanceRequest): Promise<MaintenanceCreateResponse> => {
     const formData = new FormData();
     
-    formData.append('frontal-picture', data.frontalPicture);
-    formData.append('ticket-picture', data.ticketPicture);
-    formData.append('condenser-picture', data.condenserPicture);
-    formData.append('fault-picture', data.faultPicture);
-
     const processedEquipments = data.equipments.map((eq, eqIdx) => {
       const photos = eq.environmentPhotos.map((p, pIdx) => {
         const fileKey = `eq_${eqIdx}_photo_${pIdx}`;
@@ -83,6 +78,7 @@ export const maintenanceApi = {
       };
     });
 
+    // Append metadata first (best practice for many multipart parsers)
     const metadata = {
       technicianId: data.technicianId,
       osNumber: data.osNumber,
@@ -103,9 +99,13 @@ export const maintenanceApi = {
       }
     });
 
-    const response = await client.post('/maintenance/create', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    // Append main photos
+    formData.append('frontal-picture', data.frontalPicture);
+    formData.append('ticket-picture', data.ticketPicture);
+    formData.append('condenser-picture', data.condenserPicture);
+    formData.append('fault-picture', data.faultPicture);
+
+    const response = await client.post('/maintenance/create', formData);
     return response.data;
   },
 
