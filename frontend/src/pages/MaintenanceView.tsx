@@ -1,25 +1,88 @@
+import { maintenanceApi, type MaintenanceViewResponse } from '@/api/maintenance-api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Spinner } from '@/components/ui/spinner'
 import {
   Building2,
   Camera,
-  CheckCircle2,
   ChevronLeft,
   Monitor,
   Server,
-  Waves,
   Wrench,
   Zap
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 export default function MaintenanceView() {
+  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const [data, setData] = useState<MaintenanceViewResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      if (!id) return
+      try {
+        setIsLoading(true)
+        const response = await maintenanceApi.view(id)
+        setData(response)
+      } catch (err: any) {
+        console.error('Fetch detail error:', err)
+        setError('Não foi possível carregar os detalhes da manutenção.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchDetail()
+  }, [id])
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const getImageUrl = (path: string) => {
+    if (path.startsWith('http')) return path
+    return `${API_URL}/uploads/${path}`
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 gap-4">
+        <Spinner className="w-8 h-8 text-primary" />
+        <p className="text-sm text-slate-400 font-medium">Carregando detalhes...</p>
+      </div>
+    )
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-6 text-center gap-4">
+        <div className="p-6 bg-red-50 rounded-3xl border border-red-100 max-w-xs">
+          <p className="text-sm text-red-600 font-medium">{error || 'Ordem de serviço não encontrada.'}</p>
+        </div>
+        <Button onClick={() => navigate('/')} variant="outline" className="rounded-2xl">
+          Voltar ao Histórico
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col min-h-full bg-slate-50/50 pb-10">
       {/* Page Header */}
-      <div className="p-6 flex items-center gap-4">
+      <div className="p-6 flex items-center gap-4 sticky top-0 bg-slate-50/80 backdrop-blur-md z-10">
         <Button
           variant="outline"
           size="icon"
@@ -30,52 +93,75 @@ export default function MaintenanceView() {
         </Button>
         <div>
           <h2 className="text-2xl font-bold text-primary">Detalhes da Manutenção</h2>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">OS-2023-8842</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{data.osNumber}</p>
         </div>
       </div>
 
       <div className="px-6 space-y-6">
-        {/* General Info Section (Read Only) */}
+        {/* General Info Section */}
         <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden">
           <CardHeader className="p-5 pb-2">
             <CardTitle className="text-sm font-bold text-slate-800 uppercase tracking-wider">Informações Gerais</CardTitle>
           </CardHeader>
           <CardContent className="p-5 pt-2 grid grid-cols-2 gap-4">
             <div className="space-y-0.5">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Empresa / Agência</p>
+              <p className="text-sm font-bold text-slate-700">{data.company} - {data.agency}</p>
+            </div>
+            <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Localização</p>
-              <p className="text-sm font-bold text-slate-700">Agência Central - 0192</p>
+              <p className="text-sm font-bold text-slate-700">{data.state}</p>
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Técnico</p>
+              <p className="text-sm font-bold text-slate-700">{data.technicianName || 'N/A'}</p>
             </div>
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Data/Hora</p>
-              <p className="text-sm font-bold text-slate-700">14 Out 2023, 08:30</p>
+              <p className="text-sm font-bold text-slate-700">{formatDate(data.createdAt)}</p>
             </div>
+            {data.description && (
+              <div className="col-span-2 space-y-0.5 mt-2">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Descrição</p>
+                <p className="text-sm text-slate-600 leading-relaxed italic">{data.description}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
+
+        {/* Initial Photos */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider px-1 flex items-center gap-2">
+             <Camera className="w-4 h-4 text-primary" />
+             Fotos Iniciais
+          </h3>
+          <div className="grid grid-cols-4 gap-2">
+            {data.initialPhotos.map((path, idx) => (
+              <div key={idx} className="aspect-square rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+                <img 
+                  src={getImageUrl(path)} 
+                  alt={`Foto Inicial ${idx + 1}`} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Detailed Environments List */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider px-1">Relatório de Ambientes</h3>
 
-          <MaintenanceDetailCard
-            name="Server Room A"
-            system="Split"
-            protocol="Preventiva"
-            icon={<Server className="w-5 h-5" />}
-          />
-
-          <MaintenanceDetailCard
-            name="Main Lobby"
-            system="Self-Contained"
-            protocol="Corretiva"
-            icon={<Building2 className="w-5 h-5" />}
-          />
-
-          <MaintenanceDetailCard
-            name="Manager Office"
-            system="Splitão"
-            protocol="Preventiva"
-            icon={<Monitor className="w-5 h-5" />}
-          />
+          {data.environments.map((env) => (
+            <MaintenanceDetailCard
+              key={env.id}
+              name={env.name}
+              system={env.designatedSystem}
+              protocol={env.protocolType}
+              photos={env.photos}
+              getImageUrl={getImageUrl}
+            />
+          ))}
         </div>
 
         {/* Back Button */}
@@ -93,13 +179,34 @@ export default function MaintenanceView() {
   )
 }
 
-function MaintenanceDetailCard({ name, system, protocol, icon }: { name: string; system: string; protocol: string; icon: React.ReactNode }) {
+function MaintenanceDetailCard({ 
+  name, 
+  system, 
+  protocol, 
+  photos,
+  getImageUrl
+}: { 
+  name: string; 
+  system: string; 
+  protocol: string; 
+  photos: any[];
+  getImageUrl: (path: string) => string;
+}) {
+  const getIcon = (sys: string) => {
+    switch (sys.toLowerCase()) {
+      case 'split': return <Server className="w-5 h-5" />
+      case 'self': return <Building2 className="w-5 h-5" />
+      case 'splitao': return <Zap className="w-5 h-5" />
+      default: return <Monitor className="w-5 h-5" />
+    }
+  }
+
   return (
     <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden bg-white p-5 space-y-5">
       {/* Header Info */}
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-md">
-          {icon}
+          {getIcon(system)}
         </div>
         <div>
           <h4 className="text-base font-bold text-slate-800">{name}</h4>
@@ -107,35 +214,44 @@ function MaintenanceDetailCard({ name, system, protocol, icon }: { name: string;
             <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md italic">
               {system}
             </span>
-            <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md italic ${protocol === 'Preventiva' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+            <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md italic ${
+              protocol.toLowerCase() === 'preventive' || protocol === 'Preventiva' 
+                ? 'bg-green-50 text-green-600' 
+                : 'bg-red-50 text-red-600'
               }`}>
-              {protocol}
+              {protocol === 'preventive' ? 'Preventiva' : protocol === 'corrective' ? 'Corretiva' : protocol}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Photo Grid Placeholders */}
+      {/* Photo Grid */}
       <div className="space-y-3">
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
           <Camera className="w-3 h-3" />
-          Evidências Fotográficas
+          Evidências Fotográficas ({photos.length})
         </p>
         <div className="grid grid-cols-4 gap-2">
-          <PhotoMiniPlaceholder icon={<Waves className="w-3 h-3" />} />
-          <PhotoMiniPlaceholder icon={<Wrench className="w-3 h-3" />} />
-          <PhotoMiniPlaceholder icon={<Zap className="w-3 h-3" />} />
-          <PhotoMiniPlaceholder icon={<CheckCircle2 className="w-3 h-3" />} />
+          {photos.map((photo) => (
+            <div key={photo.id} className="aspect-square bg-slate-50 rounded-xl border border-slate-100 overflow-hidden shadow-sm group relative">
+              <img 
+                src={getImageUrl(photo.path)} 
+                alt={photo.label} 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1">
+                <span className="text-[7px] text-white font-bold truncate w-full">{photo.label}</span>
+              </div>
+            </div>
+          ))}
+          {photos.length === 0 && (
+            <div className="col-span-4 py-4 flex flex-col items-center justify-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+               <Wrench className="w-5 h-5 text-slate-300 mb-1" />
+               <p className="text-[9px] font-bold text-slate-400 uppercase">Nenhuma foto anexada</p>
+            </div>
+          )}
         </div>
       </div>
     </Card>
-  )
-}
-
-function PhotoMiniPlaceholder({ icon }: { icon: React.ReactNode }) {
-  return (
-    <div className="aspect-square bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center text-slate-300">
-      {icon}
-    </div>
   )
 }

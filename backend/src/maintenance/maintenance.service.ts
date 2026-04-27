@@ -148,4 +148,45 @@ export class MaintenanceService {
       limit,
     };
   }
+
+  async findById(id: string) {
+    const order = await this.orderRepo.findOne({
+      where: { id },
+      relations: [
+        'creator',
+        'environmentServices',
+        'environmentServices.environment',
+        'environmentServices.photos',
+      ],
+    });
+
+    if (!order) {
+      throw new NotFoundException('Maintenance order not found');
+    }
+
+    return {
+      id: order.id,
+      osNumber: order.osNumber,
+      latitude: order.latitude,
+      longitude: order.longitude,
+      agency: order.agency,
+      state: order.state,
+      company: order.company,
+      description: order.description,
+      createdAt: order.createdAt,
+      initialPhotos: order.initialPhotos,
+      technicianName: order.creator?.name,
+      environments: order.environmentServices.map((es) => ({
+        id: es.environment.id,
+        name: es.environment.name,
+        designatedSystem: es.environment.designatedSystem,
+        protocolType: es.environment.protocolType,
+        photos: es.photos.map((p) => ({
+          id: p.id,
+          path: p.path,
+          label: p.label,
+        })),
+      })),
+    };
+  }
 }

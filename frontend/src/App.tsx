@@ -22,7 +22,7 @@ function App() {
               <Route path="/service/new" element={<NewService />} />
               <Route path="/service/environment/add" element={<AddEnvironment />} />
               <Route path="/service/review" element={<ReviewService />} />
-              <Route path="/service/view" element={<MaintenanceView />} />
+              <Route path="/service/view/:id" element={<MaintenanceView />} />
               <Route path="/service/complete" element={<Complete />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

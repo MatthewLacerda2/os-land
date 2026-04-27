@@ -3,15 +3,16 @@ import { Calendar } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 interface OSItemProps {
+  id: string
   number: string
   description: string
   location: string
   date: string
 }
 
-export default function OSItem({ number, description, location, date }: OSItemProps) {
+export default function OSItem({ id, number, description, location, date }: OSItemProps) {
   return (
-    <Link to="/service/view" className="block">
+    <Link to={`/service/view/${id}`} className="block">
       <Card className="rounded-2xl p-6 shadow-sm border-slate-100 bg-[#f8f9fa] flex flex-col gap-5 transition-all hover:shadow-md hover:border-slate-200 active:scale-[0.98] cursor-pointer group">
         <div className="flex justify-between items-start">
           <div className="space-y-1">

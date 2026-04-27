@@ -54,6 +54,35 @@ export interface MaintenanceReportResponse {
   filename: string;
 }
 
+export interface MaintenancePhoto {
+  id: string;
+  path: string;
+  label: string;
+}
+
+export interface MaintenanceEnvironment {
+  id: string;
+  name: string;
+  designatedSystem: string;
+  protocolType: string;
+  photos: MaintenancePhoto[];
+}
+
+export interface MaintenanceViewResponse {
+  id: string;
+  osNumber: string;
+  latitude: string;
+  longitude: string;
+  agency: string;
+  state: string;
+  company: string;
+  description: string;
+  createdAt: string;
+  initialPhotos: string[];
+  technicianName?: string;
+  environments: MaintenanceEnvironment[];
+}
+
 export const maintenanceApi = {
   list: async (offset = 0, limit = 10): Promise<MaintenanceListResponse> => {
     const response = await client.get('/maintenance/list', {
@@ -111,6 +140,11 @@ export const maintenanceApi = {
 
   getReport: async (id: string): Promise<MaintenanceReportResponse> => {
     const response = await client.get(`/maintenance/report/${id}`);
+    return response.data;
+  },
+
+  view: async (id: string): Promise<MaintenanceViewResponse> => {
+    const response = await client.get(`/maintenance/view/${id}`);
     return response.data;
   },
 };

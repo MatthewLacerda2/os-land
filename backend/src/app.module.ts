@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EnvironmentPhoto } from './entities/environment-photo.entity';
@@ -22,6 +24,7 @@ import { RolesGuard } from './auth/roles.guard';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
+      // ... existing config
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT || '5432', 10),
@@ -37,6 +40,10 @@ import { RolesGuard } from './auth/roles.guard';
         EnvironmentPhoto
       ],
       synchronize: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
     }),
     UserModule,
     MaintenanceModule,

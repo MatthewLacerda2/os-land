@@ -80,6 +80,7 @@ export default function History() {
             {services.map((service) => (
               <OSItem
                 key={service.id}
+                id={service.id}
                 number={service.osNumber}
                 description={service.company || 'Manutenção Geral'}
                 location={service.location}

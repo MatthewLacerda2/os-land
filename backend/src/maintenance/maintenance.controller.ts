@@ -4,6 +4,7 @@ import { ApiConsumes, ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '
 import { CreateMaintenanceDto, MaintenanceCreateResponseDto } from './dto/create-maintenance.dto';
 import { MaintenanceListResponseDto, PaginationQueryDto } from './dto/list-maintenance.dto';
 import { MaintenanceReportResponseDto } from './dto/report-maintenance.dto';
+import { MaintenanceViewResponseDto } from './dto/view-maintenance.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { Request } from 'express';
 
@@ -63,6 +64,17 @@ export class MaintenanceController {
       id: savedOrder.id,
       agency: savedOrder.agency,
     };
+  }
+
+  @Get('view/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'View a single maintenance order' })
+  @ApiResponse({ status: 200, type: MaintenanceViewResponseDto })
+  async viewOrder(
+    @Param('id') id: string
+  ): Promise<MaintenanceViewResponseDto> {
+    return this.maintenanceService.findById(id);
   }
 
   @Get('report/:id')
