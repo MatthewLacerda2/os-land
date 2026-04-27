@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseInterceptors, UseGuards, Req } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateMaintenanceDto, MaintenanceCreateResponseDto } from './dto/create-maintenance.dto';
 import { MaintenanceListResponseDto, PaginationQueryDto } from './dto/list-maintenance.dto';
 import { MaintenanceReportResponseDto } from './dto/report-maintenance.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { Request } from 'express';
 
 import { MaintenanceService } from './maintenance.service';
 
@@ -13,15 +15,21 @@ export class MaintenanceController {
   constructor(private readonly maintenanceService: MaintenanceService) {}
 
   @Get('list')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'List all maintenance orders' })
   @ApiResponse({ status: 200, type: MaintenanceListResponseDto })
-  listOrders(@Query() query: PaginationQueryDto): MaintenanceListResponseDto {
-    return {
-      items: [],
-      total: 0,
-      offset: query.offset || 0,
-      limit: query.limit || 10,
-    };
+  async listOrders(
+    @Query() query: PaginationQueryDto,
+    @Req() req: Request
+  ): Promise<MaintenanceListResponseDto> {
+    const user = req.user as any;
+    return this.maintenanceService.list(
+      user.userId,
+      user.role,
+      query.offset || 0,
+      query.limit || 10
+    );
   }
 
   @Post('create')

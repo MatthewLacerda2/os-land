@@ -73,7 +73,7 @@ export class MaintenanceService {
       latitude: data.latitude,
       longitude: data.longitude,
       description: data.description,
-      technician: creator,
+      creator,
       initialPhotos,
     });
 
@@ -121,5 +121,31 @@ export class MaintenanceService {
     }
 
     return savedOrder;
+  }
+  async list(userId: string, role: string, offset: number, limit: number) {
+    const query = this.orderRepo.createQueryBuilder('order')
+      .leftJoinAndSelect('order.creator', 'creator')
+      .orderBy('order.createdAt', 'DESC')
+      .skip(offset)
+      .take(limit);
+
+    if (role === 'technician') {
+      query.where('creator.id = :userId', { userId });
+    }
+
+    const [items, total] = await query.getManyAndCount();
+
+    return {
+      items: items.map(item => ({
+        id: item.id,
+        osNumber: item.osNumber,
+        location: item.state, // Map as needed
+        company: item.company || 'N/A',
+        createdAt: item.createdAt,
+      })),
+      total,
+      offset,
+      limit,
+    };
   }
 }

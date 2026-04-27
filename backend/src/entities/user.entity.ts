@@ -30,6 +30,6 @@ export class User {
   })
   role: UserRole;
 
-  @OneToMany(() => MaintenanceOrder, (order) => order.technician)
+  @OneToMany(() => MaintenanceOrder, (order) => order.creator)
   orders: MaintenanceOrder[];
 }
