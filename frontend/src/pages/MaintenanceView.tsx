@@ -132,6 +132,12 @@ export default function MaintenanceView() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocolo</p>
               <p className="text-sm font-bold text-slate-700">{data.protocolType === 'preventive' ? 'Preventiva' : 'Corretiva'}</p>
             </div>
+            {data.environmentName && (
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ambiente</p>
+                <p className="text-sm font-bold text-slate-700">{data.environmentName}</p>
+              </div>
+            )}
             {data.description && (
               <div className="col-span-2 space-y-0.5 mt-2">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Descrição</p>
@@ -141,25 +147,6 @@ export default function MaintenanceView() {
           </CardContent>
         </Card>
 
-        {/* Initial Photos */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider px-1 flex items-center gap-2">
-             <Camera className="w-4 h-4 text-primary" />
-             Fotos Iniciais
-          </h3>
-          <div className="grid grid-cols-4 gap-2">
-            {data.initialPhotos.map((path, idx) => (
-              <div key={idx} className="aspect-square rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
-                <img 
-                  src={getImageUrl(path)} 
-                  alt={`Foto Inicial ${idx + 1}`} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Detailed Environments List */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider px-1">Relatório de Ambientes</h3>
@@ -167,7 +154,6 @@ export default function MaintenanceView() {
           {data.environments.map((env) => (
             <MaintenanceDetailCard
               key={env.id}
-              name={env.name}
               system={env.designatedSystem}
               photos={env.photos}
               getImageUrl={getImageUrl}
@@ -191,12 +177,10 @@ export default function MaintenanceView() {
 }
 
 function MaintenanceDetailCard({ 
-  name, 
   system, 
   photos,
   getImageUrl
 }: { 
-  name: string; 
   system: string; 
   photos: any[];
   getImageUrl: (path: string) => string;
@@ -218,7 +202,6 @@ function MaintenanceDetailCard({
           {getIcon(system)}
         </div>
         <div>
-          <h4 className="text-base font-bold text-slate-800">{name}</h4>
           <div className="flex gap-2 mt-1">
             <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md italic">
               {system}

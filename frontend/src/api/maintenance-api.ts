@@ -25,9 +25,9 @@ export interface CreateEquipmentPhoto {
 }
 
 export interface CreateEquipment {
-  name: string;
   designatedSystem: string;
   description?: string;
+  setPoint?: number;
   environmentPhotos: CreateEquipmentPhoto[];
 }
 
@@ -43,10 +43,7 @@ export interface CreateMaintenanceRequest {
   longitude: string;
   description: string;
   protocolType: string;
-  frontalPicture: File;
-  ticketPicture: File;
-  condenserPicture: File;
-  faultPicture: File;
+  environmentName: string;
   equipments: CreateEquipment[];
 }
 
@@ -68,9 +65,9 @@ export interface MaintenancePhoto {
 
 export interface MaintenanceEnvironment {
   id: string;
-  name: string;
   designatedSystem: string;
   description?: string;
+  setPoint?: number;
   photos: MaintenancePhoto[];
 }
 
@@ -86,8 +83,8 @@ export interface MaintenanceViewResponse {
   company: string;
   description: string;
   protocolType: string;
+  environmentName?: string;
   createdAt: string;
-  initialPhotos: string[];
   technicianName?: string;
   environments: MaintenanceEnvironment[];
 }
@@ -116,7 +113,7 @@ export const maintenanceApi = {
       };
     });
 
-    // Append metadata first (best practice for many multipart parsers)
+    // Append metadata
     const metadata = {
       technicianId: data.technicianId,
       osNumber: data.osNumber,
@@ -129,6 +126,7 @@ export const maintenanceApi = {
       longitude: data.longitude,
       description: data.description,
       protocolType: data.protocolType,
+      environmentName: data.environmentName,
       equipments: processedEquipments,
     };
 
@@ -139,12 +137,6 @@ export const maintenanceApi = {
         formData.append(key, value as string);
       }
     });
-
-    // Append main photos
-    formData.append('frontal-picture', data.frontalPicture);
-    formData.append('ticket-picture', data.ticketPicture);
-    formData.append('condenser-picture', data.condenserPicture);
-    formData.append('fault-picture', data.faultPicture);
 
     const response = await client.post('/maintenance/create', formData);
     return response.data;

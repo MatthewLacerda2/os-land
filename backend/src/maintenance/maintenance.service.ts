@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
@@ -29,10 +29,6 @@ export class MaintenanceService {
   async create(
     data: CreateMaintenanceDto,
     files: {
-      'frontal-picture'?: Express.Multer.File[];
-      'ticket-picture'?: Express.Multer.File[];
-      'condenser-picture'?: Express.Multer.File[];
-      'fault-picture'?: Express.Multer.File[];
       'equipment-photos'?: Express.Multer.File[];
     },
   ) {
@@ -47,23 +43,6 @@ export class MaintenanceService {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // Save initial photos (Mandatory 4 photos)
-    const initialPhotos: string[] = [];
-    const mainPhotoKeys = ['frontal-picture', 'ticket-picture', 'condenser-picture', 'fault-picture'];
-    
-    for (const key of mainPhotoKeys) {
-      const fileArr = files[key];
-      if (!fileArr || fileArr.length === 0) {
-        throw new BadRequestException(`A foto obrigatória '${key}' está faltando.`);
-      }
-      
-      const file = fileArr[0];
-      const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
-      const filePath = path.join(uploadDir, fileName);
-      fs.writeFileSync(filePath, file.buffer);
-      initialPhotos.push(fileName);
-    }
-
     // Create Order
     const order = this.orderRepo.create({
       osNumber: data.osNumber,
@@ -76,8 +55,8 @@ export class MaintenanceService {
       longitude: data.longitude,
       description: data.description,
       protocolType: data.protocolType,
+      environmentName: data.environmentName,
       creator,
-      initialPhotos,
     });
 
     const savedOrder = await this.orderRepo.save(order);
@@ -87,9 +66,9 @@ export class MaintenanceService {
       // 1. Create Environment
       const environment = await this.envRepo.save(
         this.envRepo.create({
-          name: eqDto.name,
           designatedSystem: eqDto.designatedSystem,
           description: eqDto.description,
+          setPoint: eqDto.setPoint,
         }),
       );
 
@@ -179,14 +158,14 @@ export class MaintenanceService {
       assetNumber: order.assetNumber,
       description: order.description,
       protocolType: order.protocolType,
+      environmentName: order.environmentName,
       createdAt: order.createdAt,
-      initialPhotos: order.initialPhotos,
       technicianName: order.creator?.name,
       environments: order.environmentServices.map((es) => ({
         id: es.environment.id,
-        name: es.environment.name,
         designatedSystem: es.environment.designatedSystem,
         description: es.environment.description,
+        setPoint: es.environment.setPoint ?? undefined,
         photos: es.photos.map((p) => ({
           id: p.id,
           path: p.path,

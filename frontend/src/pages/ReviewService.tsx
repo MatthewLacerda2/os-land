@@ -38,17 +38,14 @@ export default function ReviewService() {
         company: currentOrder.company,
         assetNumber: currentOrder.assetNumber,
         protocolType: currentOrder.protocolType,
+        environmentName: currentOrder.environmentName,
         latitude: currentOrder.latitude,
         longitude: currentOrder.longitude,
         description: currentOrder.description,
-        frontalPicture: currentOrder.frontalPicture!,
-        ticketPicture: currentOrder.ticketPicture!,
-        condenserPicture: currentOrder.condenserPicture!,
-        faultPicture: currentOrder.faultPicture!,
         equipments: currentOrder.environments.map((env) => ({
-          name: env.name,
           designatedSystem: env.designatedSystem,
           description: env.description,
+          setPoint: env.setPoint,
           environmentPhotos: env.photos.map((p, idx) => ({
             label: p.label,
             file: p.file,
@@ -114,6 +111,12 @@ export default function ReviewService() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocolo</p>
               <p className="text-sm font-bold text-slate-700">{currentOrder.protocolType === 'corrective' ? 'Corretiva' : 'Preventiva'}</p>
             </div>
+            {currentOrder.environmentName && (
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ambiente</p>
+                <p className="text-sm font-bold text-slate-700">{currentOrder.environmentName}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -139,7 +142,7 @@ export default function ReviewService() {
               currentOrder.environments.map((env) => (
                 <EnvironmentItem
                   key={env.id}
-                  name={env.name}
+                  name={env.designatedSystem}
                   details={`${env.photos.length} fotos capturadas`}
                   icon={env.designatedSystem === 'split' ? <Server className="w-5 h-5" /> : <Building2 className="w-5 h-5" />}
                   photos={env.photos.map(p => p.previewUrl)}

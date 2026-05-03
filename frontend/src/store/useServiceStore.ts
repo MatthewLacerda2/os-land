@@ -8,9 +8,9 @@ export interface EnvironmentPhoto {
 
 export interface Environment {
   id: string;
-  name: string;
   designatedSystem: string;
   description?: string;
+  setPoint?: number;
   photos: EnvironmentPhoto[];
 }
 
@@ -22,19 +22,10 @@ export interface ServiceOrder {
   company?: string;
   assetNumber?: string;
   protocolType: string;
+  environmentName: string;
   latitude: string;
   longitude: string;
   description: string;
-  // Main Photos
-  frontalPicture?: File;
-  ticketPicture?: File;
-  condenserPicture?: File;
-  faultPicture?: File;
-  // Previews
-  frontalPreview?: string;
-  ticketPreview?: string;
-  condenserPreview?: string;
-  faultPreview?: string;
   
   environments: Environment[];
 }
@@ -44,7 +35,6 @@ interface ServiceStore {
   
   // Actions
   updateOrderDetails: (details: Partial<Omit<ServiceOrder, 'environments'>>) => void;
-  setInitialPhoto: (slot: 'frontal' | 'ticket' | 'condenser' | 'fault', file: File) => void;
   addEnvironment: (env: Omit<Environment, 'id'>) => void;
   removeEnvironment: (id: string) => void;
   resetOrder: () => void;
@@ -58,6 +48,7 @@ const INITIAL_STATE: ServiceOrder = {
   company: '',
   assetNumber: '',
   protocolType: 'corrective',
+  environmentName: '',
   latitude: '15.7939',
   longitude: '-47.8828',
   description: '',
@@ -70,29 +61,6 @@ export const useServiceStore = create<ServiceStore>((set) => ({
   updateOrderDetails: (details) => set((state) => ({
     currentOrder: { ...state.currentOrder, ...details }
   })),
-
-  setInitialPhoto: (slot, file) => set((state) => {
-    const previewUrl = URL.createObjectURL(file);
-    const updates: Partial<ServiceOrder> = {};
-    
-    if (slot === 'frontal') {
-      updates.frontalPicture = file;
-      updates.frontalPreview = previewUrl;
-    } else if (slot === 'ticket') {
-      updates.ticketPicture = file;
-      updates.ticketPreview = previewUrl;
-    } else if (slot === 'condenser') {
-      updates.condenserPicture = file;
-      updates.condenserPreview = previewUrl;
-    } else if (slot === 'fault') {
-      updates.faultPicture = file;
-      updates.faultPreview = previewUrl;
-    }
-
-    return {
-      currentOrder: { ...state.currentOrder, ...updates }
-    };
-  }),
 
   addEnvironment: (env) => set((state) => ({
     currentOrder: {

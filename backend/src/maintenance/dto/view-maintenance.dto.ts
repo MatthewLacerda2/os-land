@@ -16,13 +16,13 @@ export class MaintenanceEnvironmentDto {
   id: string;
 
   @ApiProperty()
-  name: string;
-
-  @ApiProperty()
   designatedSystem: string;
 
   @ApiProperty({ required: false })
   description?: string;
+
+  @ApiProperty({ required: false })
+  setPoint?: number;
 
   @ApiProperty({ type: [MaintenancePhotoDto] })
   photos: MaintenancePhotoDto[];
@@ -65,8 +65,8 @@ export class MaintenanceViewResponseDto {
   @ApiProperty()
   createdAt: Date;
 
-  @ApiProperty()
-  initialPhotos: string[];
+  @ApiProperty({ required: false })
+  environmentName?: string;
 
   @ApiProperty({ required: false })
   technicianName?: string;

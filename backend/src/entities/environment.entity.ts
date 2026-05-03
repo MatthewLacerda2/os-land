@@ -18,9 +18,6 @@ export class Environment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  name: string;
-
   @Column({
     type: 'enum',
     enum: DesignatedSystem,
@@ -30,6 +27,9 @@ export class Environment {
 
   @Column({ type: 'text', nullable: true })
   description: string;
+
+  @Column({ type: 'decimal', name: 'set_point', nullable: true, precision: 5, scale: 2 })
+  setPoint: number;
 
   @OneToMany(() => EnvironmentService, (envService) => envService.environment)
   services: EnvironmentService[];

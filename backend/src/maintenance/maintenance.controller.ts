@@ -38,19 +38,11 @@ export class MaintenanceController {
   @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 201, type: MaintenanceCreateResponseDto })
   @UseInterceptors(FileFieldsInterceptor([
-    { name: 'frontal-picture', maxCount: 1 },
-    { name: 'ticket-picture', maxCount: 1 },
-    { name: 'condenser-picture', maxCount: 1 },
-    { name: 'fault-picture', maxCount: 1 },
     { name: 'equipment-photos', maxCount: 20 },
   ]))
   async createOrder(
     @Body() data: CreateMaintenanceDto,
     @UploadedFiles() files: {
-      'frontal-picture'?: Express.Multer.File[],
-      'ticket-picture'?: Express.Multer.File[],
-      'condenser-picture'?: Express.Multer.File[],
-      'fault-picture'?: Express.Multer.File[],
       'equipment-photos'?: Express.Multer.File[],
     }
   ): Promise<MaintenanceCreateResponseDto> {

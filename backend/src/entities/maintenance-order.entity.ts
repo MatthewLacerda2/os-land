@@ -42,11 +42,11 @@ export class MaintenanceOrder {
   })
   protocolType: string;
 
+  @Column({ name: 'environment_name', nullable: true })
+  environmentName: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
-
-  @Column('simple-array', { nullable: true, name: 'initial_photos' })
-  initialPhotos: string[];
 
   @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({ name: 'technicianId' })

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useServiceStore } from '@/store/useServiceStore'
-import { Calendar, Camera, ChevronRight, ClipboardList, Info, MapPin, Wrench } from 'lucide-react'
+import { Calendar, ChevronRight, ClipboardList, MapPin, Wrench } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const BRAZIL_STATES = [
@@ -40,27 +40,11 @@ const BRAZIL_STATES = [
 export default function NewService() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { currentOrder, updateOrderDetails, setInitialPhoto } = useServiceStore()
+  const { currentOrder, updateOrderDetails } = useServiceStore()
 
   const isEditing = location.state?.fromReview
 
-  const handleFileSelect = (slot: string, file: File | null) => {
-    if (file) {
-      // Map 'label' UI ID to 'ticket' store slot
-      const storeSlot = slot === 'label' ? 'ticket' : slot as any;
-      setInitialPhoto(storeSlot, file);
-    }
-  }
-
   const handleNext = () => {
-    const { frontalPicture, ticketPicture, condenserPicture, faultPicture } = currentOrder;
-
-    // TODO: Re-enable photo validation for production
-    // if (!frontalPicture || !ticketPicture || !condenserPicture || !faultPicture) {
-    //   alert('Por favor, capture as 4 fotos iniciais obrigatórias antes de prosseguir.');
-    //   return;
-    // }
-
     if (isEditing) {
       navigate('/service/review')
     } else {
@@ -72,9 +56,9 @@ export default function NewService() {
     <div className="flex flex-col min-h-full">
       {/* Page Header */}
       <div className="p-6 pb-2">
-        <h2 className="text-3xl font-bold text-primary">Informações Básicas e Fotos</h2>
+        <h2 className="text-3xl font-bold text-primary">Informações Básicas</h2>
         <p className="text-sm text-slate-500 mt-1 leading-relaxed">
-          Capture os detalhes iniciais e imagens de diagnóstico para estabelecer a base do serviço.
+          Preencha os detalhes iniciais para estabelecer a base do serviço.
         </p>
       </div>
 
@@ -172,6 +156,17 @@ export default function NewService() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="environmentName">Nome do Ambiente</Label>
+                <Input
+                  id="environmentName"
+                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  placeholder="ex: Sala de Servidores A"
+                  value={currentOrder.environmentName}
+                  onChange={(e) => updateOrderDetails({ environmentName: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label>Protocolo de Manutenção</Label>
                 <div className="bg-slate-100 p-1 rounded-2xl flex gap-1">
                   <Button
@@ -200,49 +195,6 @@ export default function NewService() {
           </Card>
         </section>
 
-        {/* Initial Photos Section */}
-        <section className="space-y-6">
-          <div className="flex items-center gap-2 text-primary">
-            <Camera className="w-5 h-5" />
-            <h3 className="font-bold uppercase tracking-wider text-xs">Fotos Iniciais</h3>
-          </div>
-
-          <p className="text-xs text-slate-500 leading-relaxed">
-            Capture os quatro ângulos obrigatórios para estabelecer a condição do equipamento antes do serviço.
-          </p>
-
-          <div className="grid grid-cols-2 gap-4">
-            <PhotoPlaceholder
-              id="frontal"
-              label="Vista Frontal"
-              icon={<Camera className="w-6 h-6" />}
-              preview={currentOrder.frontalPreview}
-              onSelect={(file) => handleFileSelect('frontal', file)}
-            />
-            <PhotoPlaceholder
-              id="label"
-              label="Dados da Etiqueta"
-              icon={<ClipboardList className="w-6 h-6" />}
-              preview={currentOrder.ticketPreview}
-              onSelect={(file) => handleFileSelect('label', file)}
-            />
-            <PhotoPlaceholder
-              id="condenser"
-              label="Condensadora"
-              icon={<MapPin className="w-6 h-6" />}
-              preview={currentOrder.condenserPreview}
-              onSelect={(file) => handleFileSelect('condenser', file)}
-            />
-            <PhotoPlaceholder
-              id="fault"
-              label="Falha Detectada"
-              icon={<Info className="w-6 h-6" />}
-              preview={currentOrder.faultPreview}
-              onSelect={(file) => handleFileSelect('fault', file)}
-            />
-          </div>
-        </section>
-
         {/* Next Button */}
         <div className="flex justify-end pt-4">
           <Button
@@ -254,54 +206,6 @@ export default function NewService() {
           </Button>
         </div>
       </div>
-    </div>
-  )
-}
-
-interface PhotoPlaceholderProps {
-  id: string
-  label: string
-  icon: React.ReactNode
-  preview?: string
-  onSelect: (file: File | null) => void
-}
-
-function PhotoPlaceholder({ id, label, icon, preview, onSelect }: PhotoPlaceholderProps) {
-  const triggerFilePicker = () => {
-    document.getElementById(`file-${id}`)?.click()
-  }
-
-  return (
-    <div
-      onClick={triggerFilePicker}
-      className={`aspect-square rounded-2xl border-2 transition-all cursor-pointer overflow-hidden relative group ${preview ? 'border-primary shadow-md' : 'border-dashed border-slate-200 bg-slate-50 hover:border-primary text-slate-400 hover:text-primary'
-        }`}
-    >
-      <Input
-        type="file"
-        id={`file-${id}`}
-        className="hidden"
-        accept="image/*"
-        onChange={(e) => onSelect(e.target.files?.[0] || null)}
-      />
-
-      {preview ? (
-        <img src={preview} alt={label} className="w-full h-full object-cover" />
-      ) : (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-          <div className="p-3 bg-white rounded-xl shadow-sm">
-            {icon}
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
-        </div>
-      )}
-
-      {/* Overlay on hover if preview exists */}
-      {preview && (
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-          <Camera className="w-8 h-8 text-white" />
-        </div>
-      )}
     </div>
   )
 }

@@ -16,11 +16,6 @@ export class CreateEquipmentPhotoDto {
 }
 
 export class CreateEquipmentDto {
-  @ApiProperty({ example: 'Sala de Servidores A' })
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
   @ApiProperty({ enum: DesignatedSystem })
   @IsNotEmpty()
   designatedSystem: DesignatedSystem;
@@ -29,6 +24,10 @@ export class CreateEquipmentDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  setPoint?: number;
 
   @ApiProperty({ type: [CreateEquipmentPhotoDto] })
   @IsArray()
@@ -92,6 +91,11 @@ export class CreateMaintenanceDto {
   @IsNotEmpty()
   protocolType: ProtocolType;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  environmentName?: string;
+
   @ApiProperty({ type: [CreateEquipmentDto] })
   @Transform(({ value }) => {
     if (typeof value === 'string') {
@@ -110,18 +114,6 @@ export class CreateMaintenanceDto {
   equipments: CreateEquipmentDto[];
 
   // These fields are handled by the file interceptor but might appear in the body
-  @IsOptional()
-  'frontal-picture'?: any;
-
-  @IsOptional()
-  'ticket-picture'?: any;
-
-  @IsOptional()
-  'condenser-picture'?: any;
-
-  @IsOptional()
-  'fault-picture'?: any;
-
   @IsOptional()
   'equipment-photos'?: any;
 }
