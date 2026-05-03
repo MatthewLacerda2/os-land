@@ -21,8 +21,8 @@ export class MaintenanceEnvironmentDto {
   @ApiProperty()
   designatedSystem: string;
 
-  @ApiProperty()
-  protocolType: string;
+  @ApiProperty({ required: false })
+  description?: string;
 
   @ApiProperty({ type: [MaintenancePhotoDto] })
   photos: MaintenancePhotoDto[];
@@ -44,14 +44,23 @@ export class MaintenanceViewResponseDto {
   @ApiProperty()
   agency: string;
 
+  @ApiProperty({ required: false })
+  agencyName?: string;
+
   @ApiProperty()
   state: string;
 
   @ApiProperty()
   company: string;
 
+  @ApiProperty({ required: false })
+  assetNumber?: string;
+
   @ApiProperty()
   description: string;
+
+  @ApiProperty()
+  protocolType: string;
 
   @ApiProperty()
   createdAt: Date;

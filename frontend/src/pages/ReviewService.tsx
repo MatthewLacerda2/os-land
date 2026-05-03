@@ -33,8 +33,11 @@ export default function ReviewService() {
         technicianId: userId,
         osNumber: currentOrder.osNumber,
         agency: currentOrder.agency,
+        agencyName: currentOrder.agencyName,
         state: currentOrder.state,
         company: currentOrder.company,
+        assetNumber: currentOrder.assetNumber,
+        protocolType: currentOrder.protocolType,
         latitude: currentOrder.latitude,
         longitude: currentOrder.longitude,
         description: currentOrder.description,
@@ -44,8 +47,8 @@ export default function ReviewService() {
         faultPicture: currentOrder.faultPicture!,
         equipments: currentOrder.environments.map((env) => ({
           name: env.name,
-          protocolType: env.protocolType,
           designatedSystem: env.designatedSystem,
+          description: env.description,
           environmentPhotos: env.photos.map((p, idx) => ({
             label: p.label,
             file: p.file,
@@ -97,11 +100,19 @@ export default function ReviewService() {
             </div>
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Agência</p>
-              <p className="text-sm font-bold text-slate-700">{currentOrder.agency || 'N/A'}</p>
+              <p className="text-sm font-bold text-slate-700">{currentOrder.agency || 'N/A'} {currentOrder.agencyName && `- ${currentOrder.agencyName}`}</p>
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nº de Bem</p>
+              <p className="text-sm font-bold text-slate-700">{currentOrder.assetNumber || 'N/A'}</p>
             </div>
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">UF</p>
               <p className="text-sm font-bold text-slate-700">{currentOrder.state?.toUpperCase() || 'N/A'}</p>
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocolo</p>
+              <p className="text-sm font-bold text-slate-700">{currentOrder.protocolType === 'corrective' ? 'Corretiva' : 'Preventiva'}</p>
             </div>
           </CardContent>
         </Card>
@@ -129,7 +140,7 @@ export default function ReviewService() {
                 <EnvironmentItem
                   key={env.id}
                   name={env.name}
-                  details={`${env.photos.length} fotos capturadas • ${env.protocolType === 'corrective' ? 'Corretiva' : 'Preventiva'}`}
+                  details={`${env.photos.length} fotos capturadas`}
                   icon={env.designatedSystem === 'split' ? <Server className="w-5 h-5" /> : <Building2 className="w-5 h-5" />}
                   photos={env.photos.map(p => p.previewUrl)}
                   onEdit={() => navigate('/service/environment/add')}

@@ -9,16 +9,19 @@ export interface EnvironmentPhoto {
 export interface Environment {
   id: string;
   name: string;
-  protocolType: string;
   designatedSystem: string;
+  description?: string;
   photos: EnvironmentPhoto[];
 }
 
 export interface ServiceOrder {
   osNumber: string;
   agency: string;
+  agencyName?: string;
   state: string;
   company?: string;
+  assetNumber?: string;
+  protocolType: string;
   latitude: string;
   longitude: string;
   description: string;
@@ -50,8 +53,11 @@ interface ServiceStore {
 const INITIAL_STATE: ServiceOrder = {
   osNumber: '',
   agency: '',
+  agencyName: '',
   state: '',
   company: '',
+  assetNumber: '',
+  protocolType: 'corrective',
   latitude: '15.7939',
   longitude: '-47.8828',
   description: '',

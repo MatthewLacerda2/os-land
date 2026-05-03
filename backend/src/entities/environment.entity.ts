@@ -28,13 +28,6 @@ export class Environment {
   })
   designatedSystem: DesignatedSystem;
 
-  @Column({
-    type: 'enum',
-    enum: ProtocolType,
-    name: 'protocol_type',
-  })
-  protocolType: ProtocolType;
-
   @Column({ type: 'text', nullable: true })
   description: string;
 

@@ -2,23 +2,21 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { useServiceStore } from '@/store/useServiceStore'
 import {
-  Calendar,
   Camera,
   CheckCircle2,
-  ClipboardCheck,
+  MapPin,
   Settings,
   Waves,
   Wrench,
-  Zap,
-  MapPin
+  Zap
 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useServiceStore } from '@/store/useServiceStore'
 
 type SystemType = 'Split' | 'Self' | 'Splitão'
-type ProtocolType = 'Corretiva' | 'Preventiva'
 
 interface PhotoTask {
   id: string
@@ -29,33 +27,46 @@ interface PhotoTask {
 
 const PHOTO_TASKS: Record<SystemType, PhotoTask[]> = {
   'Split': [
-    { id: 'evap', label: 'Evaporadora', description: 'Limpeza da unidade interna e aletas', icon: <Waves className="w-5 h-5" /> },
-    { id: 'cond', label: 'Condensadora', description: 'Troca de calor da unidade externa', icon: <Settings className="w-5 h-5" /> },
-    { id: 'drain', label: 'Bandeja de Dreno', description: 'Verificação de obstrução e higiene', icon: <Wrench className="w-5 h-5" /> },
-    { id: 'filter', label: 'Tela do Filtro', description: 'Saturação e integridade', icon: <ClipboardCheck className="w-5 h-5" /> },
+    { id: 'evap', label: 'Evaporadora', description: 'Etiqueta Técnica', icon: <Waves className="w-5 h-5" /> },
+    { id: 'cond', label: 'Condensadora', description: 'Etiqueta Técnica', icon: <Settings className="w-5 h-5" /> },
+    { id: 'drain', label: 'Compressor', description: 'Níveis de amperagem e ruído', icon: <Wrench className="w-5 h-5" /> },
   ],
   'Self': [
-    { id: 'fan', label: 'Ventilador Principal', description: 'Alinhamento de rolamentos e correias', icon: <Zap className="w-5 h-5" /> },
-    { id: 'coil', label: 'Serpentina de Refrigeração', description: 'Verificação de pressão e temperatura', icon: <Waves className="w-5 h-5" /> },
-    { id: 'comp', label: 'Compressor', description: 'Níveis de amperagem e ruído', icon: <Settings className="w-5 h-5" /> },
-    { id: 'elec', label: 'Placa de Comando', description: 'Verificação de aperto dos terminais', icon: <Zap className="w-5 h-5" /> },
+    { id: 'fan', label: 'Etiqueta do Ventilador', description: 'Etiqueta Técnica do Ventilador', icon: <Zap className="w-5 h-5" /> },
+    { id: 'fan', label: 'Módulo do Ventilador', description: 'Foto do Módulo do Ventilador', icon: <Zap className="w-5 h-5" /> },
+    { id: 'coil', label: 'Etiqueta do Trocador', description: 'Etiqueta Técnica do Trocador', icon: <Waves className="w-5 h-5" /> },
+    { id: 'coil', label: 'Módulo do Trocador', description: 'Foto do Módulo do Trocador', icon: <Waves className="w-5 h-5" /> },
+    { id: 'comp1', label: 'Etique Técnica do Compressor 1', description: 'Etiqueta Técnica', icon: <Settings className="w-5 h-5" /> },
+    { id: 'comp2', label: 'Etique Técnica do Compressor 2', description: 'Etiqueta Técnica', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp3', label: 'Etique Técnica do Compressor 3', description: 'Etiqueta Técnica', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp1', label: 'Foto do Módulo Compressor 1', description: 'Foto do Módulo', icon: <Settings className="w-5 h-5" /> },
+    { id: 'comp2', label: 'Foto do Módulo Compressor 2', description: 'Foto do Módulo', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp3', label: 'Foto do Módulo Compressor 3', description: 'Foto do Módulo', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp3', label: 'Etiqueta do Módulo Condensador', description: 'Etiqueta Técnica do Condensador', icon: <Zap className="w-5 h-5" /> },
   ],
   'Splitão': [
-    { id: 'l-coil', label: 'Serpentina Industrial', description: 'Limpeza de aletas em escala industrial', icon: <Waves className="w-5 h-5" /> },
-    { id: 'multi-c', label: 'Multi-Compressores', description: 'Verificação de estágio e sequência', icon: <Settings className="w-5 h-5" /> },
-    { id: 'e-fan', label: 'Ventilador de Alto Fluxo', description: 'Saída de CFM e vibração', icon: <Zap className="w-5 h-5" /> },
-    { id: 'board', label: 'Lógica Principal', description: 'Status de calibração dos sensores', icon: <ClipboardCheck className="w-5 h-5" /> },
-  ]
+    { id: 'fan', label: 'Etiqueta do Ventilador', description: 'Etiqueta Técnica do Ventilador', icon: <Zap className="w-5 h-5" /> },
+    { id: 'fan', label: 'Módulo do Ventilador', description: 'Foto do Módulo do Ventilador', icon: <Zap className="w-5 h-5" /> },
+    { id: 'coil', label: 'Etiqueta do Trocador', description: 'Etiqueta Técnica do Trocador', icon: <Waves className="w-5 h-5" /> },
+    { id: 'coil', label: 'Módulo do Trocador', description: 'Foto do Módulo do Trocador', icon: <Waves className="w-5 h-5" /> },
+    { id: 'comp3', label: 'Etiqueta do Módulo Condensador', description: 'Etiqueta Técnica do Condensador', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp1', label: 'Etique Técnica do Compressor 1', description: 'Etiqueta Técnica', icon: <Settings className="w-5 h-5" /> },
+    { id: 'comp2', label: 'Etique Técnica do Compressor 2', description: 'Etiqueta Técnica', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp3', label: 'Etique Técnica do Compressor 3', description: 'Etiqueta Técnica', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp1', label: 'Foto do Módulo Compressor 1', description: 'Foto do Módulo', icon: <Settings className="w-5 h-5" /> },
+    { id: 'comp2', label: 'Foto do Módulo Compressor 2', description: 'Foto do Módulo', icon: <Zap className="w-5 h-5" /> },
+    { id: 'comp3', label: 'Foto do Módulo Compressor 3', description: 'Foto do Módulo', icon: <Zap className="w-5 h-5" /> },
+  ],
 }
 
 export default function AddEnvironment() {
   const navigate = useNavigate()
   const { addEnvironment } = useServiceStore()
-  
+
   const [envName, setEnvName] = useState('')
-  const [protocol, setProtocol] = useState<ProtocolType>('Corretiva')
   const [system, setSystem] = useState<SystemType>('Split')
-  
+  const [faultDescription, setFaultDescription] = useState('')
+
   const [taskFiles, setTaskFiles] = useState<Record<string, File>>({})
   const [taskPreviews, setTaskPreviews] = useState<Record<string, string>>({})
 
@@ -81,10 +92,11 @@ export default function AddEnvironment() {
     const requiredTasks = PHOTO_TASKS[system]
     const allPhotosCaptured = requiredTasks.every(task => !!taskFiles[task.id])
 
-    if (!allPhotosCaptured) {
-      alert(`Por favor, capture fotos de TODOS os componentes do sistema ${system}.`)
-      return
-    }
+    // TODO: Re-enable photo validation for production
+    // if (!allPhotosCaptured) {
+    //   alert(`Por favor, capture fotos de TODOS os componentes do sistema ${system}.`)
+    //   return
+    // }
 
     const photos = Object.entries(taskFiles).map(([taskId, file]) => ({
       label: PHOTO_TASKS[system].find(t => t.id === taskId)?.label || taskId,
@@ -94,11 +106,11 @@ export default function AddEnvironment() {
 
     addEnvironment({
       name: envName,
-      protocolType: protocol === 'Corretiva' ? 'corrective' : 'preventive',
       designatedSystem: system.toLowerCase().replace('ão', 'ao'),
+      description: faultDescription || undefined,
       photos
     })
-    
+
     navigate('/service/review')
   }
 
@@ -117,7 +129,7 @@ export default function AddEnvironment() {
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em]">Identificação do Ambiente</h3>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="envName" className="ml-1 text-slate-500">Nome do Local / Sala</Label>
+            <Label htmlFor="envName" className="ml-1 text-slate-500">Nome do Ambiente</Label>
             <Input
               id="envName"
               value={envName}
@@ -128,34 +140,19 @@ export default function AddEnvironment() {
           </div>
         </section>
 
-        {/* Maintenance Protocol Toggle */}
-        <section className="space-y-4">
+        {/* Fault Description */}
+        <section className="space-y-2">
           <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
             <div className="w-1 h-1 bg-primary rounded-full"></div>
-            Protocolo de Manutenção
+            Falha Detectada
           </h3>
-          <div className="bg-slate-100 p-1 rounded-2xl flex gap-1">
-            <Button
-              variant={protocol === 'Corretiva' ? 'default' : 'ghost'}
-              onClick={() => setProtocol('Corretiva')}
-              className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${
-                protocol === 'Corretiva' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
-              }`}
-            >
-              <Wrench className="w-4 h-4" />
-              Corretiva
-            </Button>
-            <Button
-              variant={protocol === 'Preventiva' ? 'default' : 'ghost'}
-              onClick={() => setProtocol('Preventiva')}
-              className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${
-                protocol === 'Preventiva' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
-              }`}
-            >
-              <Calendar className="w-4 h-4" />
-              Preventiva
-            </Button>
-          </div>
+          <Textarea
+            id="faultDescription"
+            className="min-h-[100px] rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+            placeholder="Descreva a falha detectada, sintomas e observações visuais deste ambiente..."
+            value={faultDescription}
+            onChange={(e) => setFaultDescription(e.target.value)}
+          />
         </section>
 
         {/* System Designation Chips */}
@@ -174,11 +171,10 @@ export default function AddEnvironment() {
                   setTaskPreviews({})
                   setTaskFiles({})
                 }}
-                className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${
-                  system === type
-                    ? 'bg-primary text-white shadow-md'
-                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                }`}
+                className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${system === type
+                  ? 'bg-primary text-white shadow-md'
+                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  }`}
               >
                 {type}
               </Button>
@@ -207,9 +203,8 @@ export default function AddEnvironment() {
                   />
                   <Card
                     onClick={() => triggerFilePicker(task.id)}
-                    className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${
-                      previewUrl ? 'border-primary bg-blue-50/30' : 'border-transparent bg-slate-50 hover:border-slate-200'
-                    }`}
+                    className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${previewUrl ? 'border-primary bg-blue-50/30' : 'border-transparent bg-slate-50 hover:border-slate-200'
+                      }`}
                   >
                     <div className="w-12 h-12 bg-white text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                       {task.icon}
@@ -218,9 +213,8 @@ export default function AddEnvironment() {
                       <h4 className="text-sm font-bold text-slate-800 tracking-tight">{task.label}</h4>
                       <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{task.description}</p>
                     </div>
-                    <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${
-                      previewUrl ? 'border-2 border-primary shadow-md' : 'bg-slate-100 text-slate-300 rounded-full'
-                    }`}>
+                    <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${previewUrl ? 'border-2 border-primary shadow-md' : 'bg-slate-100 text-slate-300 rounded-full'
+                      }`}>
                       {previewUrl ? (
                         <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                       ) : (

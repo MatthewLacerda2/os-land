@@ -5,6 +5,9 @@ export interface MaintenanceItem {
   osNumber: string;
   location: string;
   company: string;
+  agency: string;
+  agencyName?: string;
+  assetNumber?: string;
   createdAt: string;
 }
 
@@ -23,8 +26,8 @@ export interface CreateEquipmentPhoto {
 
 export interface CreateEquipment {
   name: string;
-  protocolType: string;
   designatedSystem: string;
+  description?: string;
   environmentPhotos: CreateEquipmentPhoto[];
 }
 
@@ -32,11 +35,14 @@ export interface CreateMaintenanceRequest {
   technicianId: string;
   osNumber: string;
   agency: string;
+  agencyName?: string;
+  assetNumber?: string;
   state: string;
   company?: string;
   latitude: string;
   longitude: string;
   description: string;
+  protocolType: string;
   frontalPicture: File;
   ticketPicture: File;
   condenserPicture: File;
@@ -64,7 +70,7 @@ export interface MaintenanceEnvironment {
   id: string;
   name: string;
   designatedSystem: string;
-  protocolType: string;
+  description?: string;
   photos: MaintenancePhoto[];
 }
 
@@ -74,9 +80,12 @@ export interface MaintenanceViewResponse {
   latitude: string;
   longitude: string;
   agency: string;
+  agencyName?: string;
+  assetNumber?: string;
   state: string;
   company: string;
   description: string;
+  protocolType: string;
   createdAt: string;
   initialPhotos: string[];
   technicianName?: string;
@@ -112,11 +121,14 @@ export const maintenanceApi = {
       technicianId: data.technicianId,
       osNumber: data.osNumber,
       agency: data.agency,
+      agencyName: data.agencyName,
+      assetNumber: data.assetNumber,
       state: data.state,
       company: data.company,
       latitude: data.latitude,
       longitude: data.longitude,
       description: data.description,
+      protocolType: data.protocolType,
       equipments: processedEquipments,
     };
 

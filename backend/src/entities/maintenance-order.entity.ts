@@ -19,14 +19,28 @@ export class MaintenanceOrder {
   @Column()
   agency: string;
 
+  @Column({ name: 'agency_name', nullable: true })
+  agencyName: string;
+
   @Column()
   state: string;
 
-  @Column()
+  @Column({ nullable: true })
   company: string;
+
+  @Column({ name: 'asset_number', nullable: true })
+  assetNumber: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
+
+  @Column({
+    type: 'enum',
+    enum: ['corrective', 'preventive'],
+    name: 'protocol_type',
+    default: 'corrective',
+  })
+  protocolType: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

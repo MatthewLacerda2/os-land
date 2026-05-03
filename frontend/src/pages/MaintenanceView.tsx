@@ -106,8 +106,16 @@ export default function MaintenanceView() {
           <CardContent className="p-5 pt-2 grid grid-cols-2 gap-4">
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Empresa / Agência</p>
-              <p className="text-sm font-bold text-slate-700">{data.company} - {data.agency}</p>
+              <p className="text-sm font-bold text-slate-700">
+                {data.company} - {data.agency} {data.agencyName && `(${data.agencyName})`}
+              </p>
             </div>
+            {data.assetNumber && (
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nº de Bem</p>
+                <p className="text-sm font-bold text-slate-700">{data.assetNumber}</p>
+              </div>
+            )}
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Localização</p>
               <p className="text-sm font-bold text-slate-700">{data.state}</p>
@@ -119,6 +127,10 @@ export default function MaintenanceView() {
             <div className="space-y-0.5">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Data/Hora</p>
               <p className="text-sm font-bold text-slate-700">{formatDate(data.createdAt)}</p>
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocolo</p>
+              <p className="text-sm font-bold text-slate-700">{data.protocolType === 'preventive' ? 'Preventiva' : 'Corretiva'}</p>
             </div>
             {data.description && (
               <div className="col-span-2 space-y-0.5 mt-2">
@@ -157,7 +169,6 @@ export default function MaintenanceView() {
               key={env.id}
               name={env.name}
               system={env.designatedSystem}
-              protocol={env.protocolType}
               photos={env.photos}
               getImageUrl={getImageUrl}
             />
@@ -182,13 +193,11 @@ export default function MaintenanceView() {
 function MaintenanceDetailCard({ 
   name, 
   system, 
-  protocol, 
   photos,
   getImageUrl
 }: { 
   name: string; 
   system: string; 
-  protocol: string; 
   photos: any[];
   getImageUrl: (path: string) => string;
 }) {
@@ -213,13 +222,6 @@ function MaintenanceDetailCard({
           <div className="flex gap-2 mt-1">
             <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md italic">
               {system}
-            </span>
-            <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md italic ${
-              protocol.toLowerCase() === 'preventive' || protocol === 'Preventiva' 
-                ? 'bg-green-50 text-green-600' 
-                : 'bg-red-50 text-red-600'
-              }`}>
-              {protocol === 'preventive' ? 'Preventiva' : protocol === 'corrective' ? 'Corretiva' : protocol}
             </span>
           </div>
         </div>

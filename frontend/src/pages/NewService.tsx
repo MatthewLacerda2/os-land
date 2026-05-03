@@ -3,9 +3,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import { useServiceStore } from '@/store/useServiceStore'
-import { Camera, ChevronRight, ClipboardList, Info, MapPin } from 'lucide-react'
+import { Calendar, Camera, ChevronRight, ClipboardList, Info, MapPin, Wrench } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const BRAZIL_STATES = [
@@ -55,11 +54,12 @@ export default function NewService() {
 
   const handleNext = () => {
     const { frontalPicture, ticketPicture, condenserPicture, faultPicture } = currentOrder;
-    
-    if (!frontalPicture || !ticketPicture || !condenserPicture || !faultPicture) {
-      alert('Por favor, capture as 4 fotos iniciais obrigatórias antes de prosseguir.');
-      return;
-    }
+
+    // TODO: Re-enable photo validation for production
+    // if (!frontalPicture || !ticketPicture || !condenserPicture || !faultPicture) {
+    //   alert('Por favor, capture as 4 fotos iniciais obrigatórias antes de prosseguir.');
+    //   return;
+    // }
 
     if (isEditing) {
       navigate('/service/review')
@@ -100,13 +100,27 @@ export default function NewService() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="agencyCode">Código da Agência</Label>
+                <Label htmlFor="agencyCode">Prefixo da Agência</Label>
                 <Input
                   id="agencyCode"
                   className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
                   placeholder="ID da Agência"
                   value={currentOrder.agency}
                   onChange={(e) => updateOrderDetails({ agency: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <Label htmlFor="agencyName">Nome da Agência</Label>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+                </div>
+                <Input
+                  id="agencyName"
+                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  placeholder="Nome da Unidade"
+                  value={currentOrder.agencyName}
+                  onChange={(e) => updateOrderDetails({ agencyName: e.target.value })}
                 />
               </div>
 
@@ -144,14 +158,43 @@ export default function NewService() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Descrição da Falha</Label>
-                <Textarea
-                  id="description"
-                  className="min-h-[100px] rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
-                  placeholder="Descreva a falha detectada, sintomas e quaisquer observações visuais imediatas..."
-                  value={currentOrder.description}
-                  onChange={(e) => updateOrderDetails({ description: e.target.value })}
+                <div className="flex justify-between">
+                  <Label htmlFor="assetNumber">Nº de bem</Label>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+                </div>
+                <Input
+                  id="assetNumber"
+                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  placeholder="Número de patrimônio"
+                  value={currentOrder.assetNumber}
+                  onChange={(e) => updateOrderDetails({ assetNumber: e.target.value })}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Protocolo de Manutenção</Label>
+                <div className="bg-slate-100 p-1 rounded-2xl flex gap-1">
+                  <Button
+                    type="button"
+                    variant={currentOrder.protocolType === 'corrective' ? 'default' : 'ghost'}
+                    onClick={() => updateOrderDetails({ protocolType: 'corrective' })}
+                    className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${currentOrder.protocolType === 'corrective' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
+                      }`}
+                  >
+                    <Wrench className="w-4 h-4" />
+                    Corretiva
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={currentOrder.protocolType === 'preventive' ? 'default' : 'ghost'}
+                    onClick={() => updateOrderDetails({ protocolType: 'preventive' })}
+                    className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${currentOrder.protocolType === 'preventive' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
+                      }`}
+                  >
+                    <Calendar className="w-4 h-4" />
+                    Preventiva
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

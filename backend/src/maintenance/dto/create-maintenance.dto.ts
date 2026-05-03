@@ -21,13 +21,14 @@ export class CreateEquipmentDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ enum: ProtocolType })
-  @IsNotEmpty()
-  protocolType: ProtocolType;
-
   @ApiProperty({ enum: DesignatedSystem })
   @IsNotEmpty()
   designatedSystem: DesignatedSystem;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @ApiProperty({ type: [CreateEquipmentPhotoDto] })
   @IsArray()
@@ -53,6 +54,11 @@ export class CreateMaintenanceDto {
   @IsNotEmpty()
   agency: string;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  agencyName?: string;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -62,6 +68,11 @@ export class CreateMaintenanceDto {
   @IsOptional()
   @IsString()
   company?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  assetNumber?: string;
 
   @ApiProperty()
   @IsString()
@@ -76,6 +87,10 @@ export class CreateMaintenanceDto {
   @ApiProperty()
   @IsString()
   description: string;
+
+  @ApiProperty({ enum: ProtocolType })
+  @IsNotEmpty()
+  protocolType: ProtocolType;
 
   @ApiProperty({ type: [CreateEquipmentDto] })
   @Transform(({ value }) => {

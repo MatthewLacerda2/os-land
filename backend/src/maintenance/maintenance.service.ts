@@ -68,11 +68,14 @@ export class MaintenanceService {
     const order = this.orderRepo.create({
       osNumber: data.osNumber,
       agency: data.agency,
+      agencyName: data.agencyName,
       state: data.state,
       company: data.company,
+      assetNumber: data.assetNumber,
       latitude: data.latitude,
       longitude: data.longitude,
       description: data.description,
+      protocolType: data.protocolType,
       creator,
       initialPhotos,
     });
@@ -86,7 +89,7 @@ export class MaintenanceService {
         this.envRepo.create({
           name: eqDto.name,
           designatedSystem: eqDto.designatedSystem,
-          protocolType: eqDto.protocolType,
+          description: eqDto.description,
         }),
       );
 
@@ -170,9 +173,12 @@ export class MaintenanceService {
       latitude: order.latitude,
       longitude: order.longitude,
       agency: order.agency,
+      agencyName: order.agencyName,
       state: order.state,
       company: order.company,
+      assetNumber: order.assetNumber,
       description: order.description,
+      protocolType: order.protocolType,
       createdAt: order.createdAt,
       initialPhotos: order.initialPhotos,
       technicianName: order.creator?.name,
@@ -180,7 +186,7 @@ export class MaintenanceService {
         id: es.environment.id,
         name: es.environment.name,
         designatedSystem: es.environment.designatedSystem,
-        protocolType: es.environment.protocolType,
+        description: es.environment.description,
         photos: es.photos.map((p) => ({
           id: p.id,
           path: p.path,
