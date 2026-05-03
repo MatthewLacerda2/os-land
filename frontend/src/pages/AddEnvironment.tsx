@@ -117,11 +117,10 @@ export default function AddEnvironment() {
     const requiredTasks = PHOTO_TASKS[system]
     const allPhotosCaptured = requiredTasks.every(task => !!taskFiles[task.id])
 
-    //TODO: Re-enable photo validation for production
-    // if (!allPhotosCaptured) {
-    //   alert(`Por favor, capture fotos de TODOS os componentes do sistema ${system}.`)
-    //   return
-    // }
+    if (!allPhotosCaptured) {
+      alert(`Por favor, capture fotos de TODOS os componentes do sistema ${system}.`)
+      return
+    }
 
     const photos = Object.entries(taskFiles).map(([taskId, file]) => ({
       label: PHOTO_TASKS[system].find(t => t.id === taskId)?.label || taskId,
