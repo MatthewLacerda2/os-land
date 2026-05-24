@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
-import * as fs from 'fs';
+import { promises as fs, existsSync } from 'fs';
 import * as path from 'path';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { EnvironmentService } from '../entities/environment-service.entity';
 import { Environment } from '../entities/environment.entity';
 import { MaintenanceOrder } from '../entities/maintenance-order.entity';
@@ -13,6 +13,8 @@ import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
 
 @Injectable()
 export class MaintenanceService {
+  private readonly logger = new Logger(MaintenanceService.name);
+
   constructor(
     @InjectRepository(MaintenanceOrder)
     private orderRepo: Repository<MaintenanceOrder>,
@@ -24,6 +26,7 @@ export class MaintenanceService {
     private photoRepo: Repository<MaintenancePhoto>,
     @InjectRepository(User)
     private userRepo: Repository<User>,
+    private dataSource: DataSource,
   ) {}
 
   async create(
@@ -32,77 +35,101 @@ export class MaintenanceService {
       'equipment-photos'?: Express.Multer.File[];
     },
   ) {
-    console.log("Creator id: " + data.technicianId)
-    const creator = await this.userRepo.findOneBy({ id: data.technicianId });
-    if (!creator) {
-      throw new NotFoundException('User not found');
-    }
-
     const uploadDir = path.join(process.cwd(), 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    if (!existsSync(uploadDir)) {
+      await fs.mkdir(uploadDir, { recursive: true });
     }
 
-    // Create Order
-    const order = this.orderRepo.create({
-      osNumber: data.osNumber,
-      agency: data.agency,
-      agencyName: data.agencyName,
-      state: data.state,
-      company: data.company,
-      assetNumber: data.assetNumber,
-      latitude: data.latitude,
-      longitude: data.longitude,
-      description: data.description,
-      protocolType: data.protocolType,
-      environmentName: data.environmentName,
-      creator,
-    });
+    const writtenFiles: string[] = [];
 
-    const savedOrder = await this.orderRepo.save(order);
+    try {
+      const savedOrder = await this.dataSource.transaction(async (tem) => {
+        const creator = await tem.findOneBy(User, { id: data.technicianId });
+        if (!creator) {
+          throw new NotFoundException('User not found');
+        }
 
-    // Process Equipments
-    for (const eqDto of data.equipments) {
-      // 1. Create Environment
-      const environment = await this.envRepo.save(
-        this.envRepo.create({
-          designatedSystem: eqDto.designatedSystem,
-          description: eqDto.description,
-          setPoint: eqDto.setPoint,
-        }),
-      );
+        // Create Order
+        const order = tem.create(MaintenanceOrder, {
+          osNumber: data.osNumber,
+          agency: data.agency,
+          agencyName: data.agencyName,
+          state: data.state,
+          company: data.company,
+          assetNumber: data.assetNumber,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          description: data.description,
+          protocolType: data.protocolType,
+          environmentName: data.environmentName,
+          creator,
+        });
 
-      // 2. Create EnvironmentService
-      const envService = await this.envServiceRepo.save(
-        this.envServiceRepo.create({
-          order: savedOrder,
-          environment,
-        }),
-      );
+        const savedOrder = await tem.save(order);
 
-      // 3. Save Equipment Photos
-      if (files['equipment-photos']) {
-        for (const photoDto of eqDto.environmentPhotos) {
-          // The frontend sends fileKey which matches the originalname we gave in the FormData append
-          const file = files['equipment-photos'].find((f) => f.originalname === photoDto.fileKey);
-          if (file) {
-            const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
-            const filePath = path.join(uploadDir, fileName);
-            fs.writeFileSync(filePath, file.buffer);
+        // Process Equipments
+        for (const eqDto of data.equipments) {
+          // 1. Create Environment
+          const environment = await tem.save(
+            tem.create(Environment, {
+              designatedSystem: eqDto.designatedSystem,
+              description: eqDto.description,
+              setPoint: eqDto.setPoint,
+            }),
+          );
 
-            await this.photoRepo.save(
-              this.photoRepo.create({
-                path: fileName,
-                label: photoDto.label,
-                environmentService: envService,
-              }),
-            );
+          // 2. Create EnvironmentService
+          const envService = await tem.save(
+            tem.create(EnvironmentService, {
+              order: savedOrder,
+              environment,
+            }),
+          );
+
+          // 3. Save Equipment Photos
+          if (files['equipment-photos']) {
+            for (const photoDto of eqDto.environmentPhotos) {
+              // The frontend sends fileKey which matches the originalname we gave in the FormData append
+              const file = files['equipment-photos'].find((f) => f.originalname === photoDto.fileKey);
+              if (file) {
+                const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
+                const filePath = path.join(uploadDir, fileName);
+                
+                // Asynchronous, non-blocking file write
+                await fs.writeFile(filePath, file.buffer);
+                writtenFiles.push(filePath);
+
+                await tem.save(
+                  tem.create(MaintenancePhoto, {
+                    path: fileName,
+                    label: photoDto.label,
+                    environmentService: envService,
+                  }),
+                );
+              }
+            }
           }
         }
-      }
-    }
 
-    return savedOrder;
+        return savedOrder;
+      });
+
+      return savedOrder;
+    } catch (error) {
+      // Roll back the written files on database transaction failure
+      this.logger.warn('Maintenance order transaction failed. Initiating disk cleanup...');
+      for (const filePath of writtenFiles) {
+        try {
+          if (existsSync(filePath)) {
+            await fs.unlink(filePath);
+            this.logger.log(`Deleted orphaned file: ${filePath}`);
+          }
+        } catch (unlinkError) {
+          this.logger.error(`Failed to delete orphaned file ${filePath}:`, unlinkError);
+        }
+      }
+      throw error;
+    }
   }
   async list(userId: string, role: string, offset: number, limit: number) {
     const query = this.orderRepo.createQueryBuilder('order')
