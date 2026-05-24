@@ -1,15 +1,15 @@
-FROM node:20-alpine AS builder
+FROM oven/bun:alpine AS builder
 
 WORKDIR /usr/src/app
 
-COPY frontend/package*.json ./
-RUN npm ci
+COPY frontend/package.json frontend/bun.lockb* ./
+RUN bun install --frozen-lockfile
 
 COPY frontend/ ./
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
-RUN npm run build
+RUN bun run build
 
 FROM nginx:alpine
 
