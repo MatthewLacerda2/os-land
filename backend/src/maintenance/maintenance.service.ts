@@ -1,33 +1,16 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { promises as fs, existsSync } from 'fs';
 import * as path from 'path';
-import { Repository, DataSource } from 'typeorm';
 import { EnvironmentService } from '../entities/environment-service.entity';
-import { Environment } from '../entities/environment.entity';
-import { MaintenanceOrder } from '../entities/maintenance-order.entity';
-import { MaintenancePhoto } from '../entities/maintenance-photo.entity';
-import { User } from '../entities/user.entity';
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
+import { MaintenanceRepository, PersistedPhoto } from './maintenance.repository';
 
 @Injectable()
 export class MaintenanceService {
   private readonly logger = new Logger(MaintenanceService.name);
 
-  constructor(
-    @InjectRepository(MaintenanceOrder)
-    private orderRepo: Repository<MaintenanceOrder>,
-    @InjectRepository(Environment)
-    private envRepo: Repository<Environment>,
-    @InjectRepository(EnvironmentService)
-    private envServiceRepo: Repository<EnvironmentService>,
-    @InjectRepository(MaintenancePhoto)
-    private photoRepo: Repository<MaintenancePhoto>,
-    @InjectRepository(User)
-    private userRepo: Repository<User>,
-    private dataSource: DataSource,
-  ) {}
+  constructor(private readonly maintenanceRepository: MaintenanceRepository) {}
 
   async create(
     data: CreateMaintenanceDto,
@@ -43,76 +26,37 @@ export class MaintenanceService {
     const writtenFiles: string[] = [];
 
     try {
-      const savedOrder = await this.dataSource.transaction(async (tem) => {
-        const creator = await tem.findOneBy(User, { id: data.technicianId });
-        if (!creator) {
-          throw new NotFoundException('User not found');
-        }
+      const savedOrder = await this.maintenanceRepository.createOrderWithEnvironments(
+        data,
+        async (
+          _envService: EnvironmentService,
+          equipmentIndex: number,
+        ): Promise<PersistedPhoto[]> => {
+          const eqDto = data.equipments[equipmentIndex];
+          const persisted: PersistedPhoto[] = [];
 
-        // Create Order
-        const order = tem.create(MaintenanceOrder, {
-          osNumber: data.osNumber,
-          agency: data.agency,
-          agencyName: data.agencyName,
-          state: data.state,
-          company: data.company,
-          assetNumber: data.assetNumber,
-          latitude: data.latitude,
-          longitude: data.longitude,
-          description: data.description,
-          protocolType: data.protocolType,
-          environmentName: data.environmentName,
-          creator,
-        });
+          if (!eqDto || !files['equipment-photos']) {
+            return persisted;
+          }
 
-        const savedOrder = await tem.save(order);
+          for (const photoDto of eqDto.environmentPhotos) {
+            // The frontend sends fileKey which matches the originalname we gave in the FormData append
+            const file = files['equipment-photos'].find((f) => f.originalname === photoDto.fileKey);
+            if (file) {
+              const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
+              const filePath = path.join(uploadDir, fileName);
 
-        // Process Equipments
-        for (const eqDto of data.equipments) {
-          // 1. Create Environment
-          const environment = await tem.save(
-            tem.create(Environment, {
-              designatedSystem: eqDto.designatedSystem,
-              description: eqDto.description,
-              setPoint: eqDto.setPoint,
-            }),
-          );
+              // Asynchronous, non-blocking file write
+              await fs.writeFile(filePath, file.buffer);
+              writtenFiles.push(filePath);
 
-          // 2. Create EnvironmentService
-          const envService = await tem.save(
-            tem.create(EnvironmentService, {
-              order: savedOrder,
-              environment,
-            }),
-          );
-
-          // 3. Save Equipment Photos
-          if (files['equipment-photos']) {
-            for (const photoDto of eqDto.environmentPhotos) {
-              // The frontend sends fileKey which matches the originalname we gave in the FormData append
-              const file = files['equipment-photos'].find((f) => f.originalname === photoDto.fileKey);
-              if (file) {
-                const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
-                const filePath = path.join(uploadDir, fileName);
-                
-                // Asynchronous, non-blocking file write
-                await fs.writeFile(filePath, file.buffer);
-                writtenFiles.push(filePath);
-
-                await tem.save(
-                  tem.create(MaintenancePhoto, {
-                    path: fileName,
-                    label: photoDto.label,
-                    environmentService: envService,
-                  }),
-                );
-              }
+              persisted.push({ path: fileName, label: photoDto.label });
             }
           }
-        }
 
-        return savedOrder;
-      });
+          return persisted;
+        },
+      );
 
       return savedOrder;
     } catch (error) {
@@ -131,18 +75,14 @@ export class MaintenanceService {
       throw error;
     }
   }
+
   async list(userId: string, role: string, offset: number, limit: number) {
-    const query = this.orderRepo.createQueryBuilder('order')
-      .leftJoinAndSelect('order.creator', 'creator')
-      .orderBy('order.createdAt', 'DESC')
-      .skip(offset)
-      .take(limit);
-
-    if (role === 'technician') {
-      query.where('creator.id = :userId', { userId });
-    }
-
-    const [items, total] = await query.getManyAndCount();
+    const [items, total] = await this.maintenanceRepository.findAndCount(
+      role,
+      userId,
+      offset,
+      limit,
+    );
 
     return {
       items: items.map(item => ({
@@ -159,15 +99,7 @@ export class MaintenanceService {
   }
 
   async findById(id: string) {
-    const order = await this.orderRepo.findOne({
-      where: { id },
-      relations: [
-        'creator',
-        'environmentServices',
-        'environmentServices.environment',
-        'environmentServices.photos',
-      ],
-    });
+    const order = await this.maintenanceRepository.findOneWithRelations(id);
 
     if (!order) {
       throw new NotFoundException('Maintenance order not found');
