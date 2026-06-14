@@ -1,12 +1,378 @@
+import PhotoUpload from "@/components/common/PhotoUpload";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useServiceStore } from "@/store/useServiceStore";
-import { Camera, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Settings, Waves, Wrench, Zap } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PHOTO_TASKS, type SystemType } from "@/pages/add-environment-tasks";
+
+type SystemType = "Split" | "Self" | "Splitão";
+
+interface PhotoTask {
+  id: string;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+  preventiveOnly?: boolean;
+}
+
+const PHOTO_TASKS: Record<SystemType, PhotoTask[]> = {
+  Split: [
+    {
+      id: "evap_tec",
+      label: "Foto da Etiqueta Técnica da Evaporadora",
+      description: "Etiqueta Técnica",
+      icon: <Waves className="w-5 h-5" />,
+    },
+    {
+      id: "evap",
+      label: "Foto da Evaporadora",
+      description: "Evaporadora",
+      icon: <Waves className="w-5 h-5" />,
+    },
+    {
+      id: "cond_tec",
+      label: "Foto da Etiqueta Técnica da Condensadora",
+      description: "Etiqueta Técnica",
+      icon: <Settings className="w-5 h-5" />,
+    },
+    {
+      id: "cond",
+      label: "Foto da Condensadora",
+      description: "Condensadora",
+      icon: <Settings className="w-5 h-5" />,
+    },
+    {
+      id: "comp_tec",
+      label: "Foto da Etiqueta do Compressor",
+      description: "Etiqueta do Compressor",
+      icon: <Wrench className="w-5 h-5" />,
+    },
+    {
+      id: "compressor",
+      label: "Foto do Compressor",
+      description: "Compressor",
+      icon: <Wrench className="w-5 h-5" />,
+    },
+    {
+      id: "temp_in",
+      label: "Temperatura de Entrada",
+      description: "Medição da temperatura de entrada",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "temp_out",
+      label: "Temperatura de Saída",
+      description: "Medição da temperatura de saída",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "press_high",
+      label: "Pressão de Alta",
+      description: "Medição da pressão de alta",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "press_low",
+      label: "Pressão de Baixa",
+      description: "Medição da pressão de baixa",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "temp_in",
+      label: "Temperatura de Alta",
+      description: "Medição da temperatura de alta",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "temp_out",
+      label: "Temperatura de Baixa",
+      description: "Medição da temperatura de baixa",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "amp",
+      label: "Amperagem",
+      description: "Medição da amperagem",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+  ],
+  Self: [
+    {
+      id: "et_fan",
+      label: "Etiqueta Técnica do Módulo Ventilador",
+      description: "Etiqueta Técnica do Módulo Ventilador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "fan",
+      label: "Foto do Módulo Ventilador",
+      description: "Foto do Módulo Ventilador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "et_coil",
+      label: "Etiqueta Técnica do Módulo Trocador",
+      description: "Etiqueta Técnica do Módulo Trocador",
+      icon: <Waves className="w-5 h-5" />,
+    },
+    {
+      id: "coil",
+      label: "Foto do Módulo Trocador",
+      description: "Foto do Módulo Trocador",
+      icon: <Waves className="w-5 h-5" />,
+    },
+    {
+      id: "et_comp1",
+      label: "Etiqueta Técnica do Compressor 1",
+      description: "Etiqueta Técnica 1",
+      icon: <Settings className="w-5 h-5" />,
+    },
+    {
+      id: "et_comp2",
+      label: "Etiqueta Técnica do Compressor 2",
+      description: "Etiqueta Técnica 2",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "et_comp3",
+      label: "Etiqueta Técnica do Compressor 3",
+      description: "Etiqueta Técnica 3",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "comp1",
+      label: "Foto do Compressor 1",
+      description: "Foto do Compressor 1",
+      icon: <Settings className="w-5 h-5" />,
+    },
+    {
+      id: "comp2",
+      label: "Foto do Compressor 2",
+      description: "Foto do Compressor 2",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "comp3",
+      label: "Foto do Compressor 3",
+      description: "Foto do Compressor 3",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "et_cond",
+      label: "Etiqueta do Módulo Condensador",
+      description: "Etiqueta Técnica do Módulo Condensador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "cond",
+      label: "Foto do Módulo Condensador",
+      description: "Foto do Módulo Condensador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "air_flow",
+      label: "Vazão de ar de saída no Módulo Ventilador",
+      description: "Medição da vazão de ar de saída no Módulo Ventilador",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Foto do filtro de ar do Módulo Trocador",
+      description: "Foto do filtro de ar",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Temperatura de Alta",
+      description: "Medição da temperatura de alta",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Temperatura de Baixa",
+      description: "Medição da temperatura de baixa",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Pressão de Alta",
+      description: "Medição da pressão de alta",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Pressão de Baixa",
+      description: "Medição da pressão de baixa",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Amperagem",
+      description: "Medição da amperagem",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Módulo Trocador",
+      description: "Módulo trocador",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Foto do Termostato",
+      description: "Foto do Termostato",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+  ],
+  Splitão: [
+    {
+      id: "fan",
+      label: "Etiqueta Técnica do Módulo Ventilador",
+      description: "Etiqueta Técnica do Módulo Ventilador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "fan",
+      label: "Foto do Módulo Ventilador",
+      description: "Foto do Módulo Ventilador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "coil",
+      label: "Etiqueta Técnica do Módulo Trocador",
+      description: "Etiqueta Técnica do Módulo Trocador",
+      icon: <Waves className="w-5 h-5" />,
+    },
+    {
+      id: "coil",
+      label: "Foto do Módulo do Trocador",
+      description: "Foto do Módulo do Trocador",
+      icon: <Waves className="w-5 h-5" />,
+    },
+    {
+      id: "comp3",
+      label: "Etiqueta Técnica do Módulo Condensador",
+      description: "Etiqueta Técnica do Módulo Condensador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "comp3",
+      label: "Foto do Módulo Condensador",
+      description: "Foto do Módulo Condensador",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "comp1",
+      label: "Etique Técnica do Compressor 1",
+      description: "Etiqueta Técnica do Compressor 1",
+      icon: <Settings className="w-5 h-5" />,
+    },
+    {
+      id: "comp2",
+      label: "Etique Técnica do Compressor 2",
+      description: "Etiqueta Técnica do Compressor 2",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "comp3",
+      label: "Etique Técnica do Compressor 3",
+      description: "Etiqueta Técnica do Compressor 3",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "comp1",
+      label: "Foto do Módulo Compressor 1",
+      description: "Foto do Módulo Compressor 1",
+      icon: <Settings className="w-5 h-5" />,
+    },
+    {
+      id: "comp2",
+      label: "Foto do Módulo Compressor 2",
+      description: "Foto do Módulo Compressor 2",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "comp3",
+      label: "Foto do Módulo Compressor 3",
+      description: "Foto do Módulo Compressor 3",
+      icon: <Zap className="w-5 h-5" />,
+    },
+    {
+      id: "air_flow",
+      label: "Vazão de ar de saída no Módulo Ventilador",
+      description: "Medição da vazão de ar de saída no Módulo Ventilador",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Foto do filtro de ar do Módulo Trocador",
+      description: "Foto do filtro de ar",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Temperatura de Alta",
+      description: "Medição da temperatura de alta",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Temperatura de Baixa",
+      description: "Medição da temperatura de baixa",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Pressão de Alta",
+      description: "Medição da pressão de alta",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Pressão de Baixa",
+      description: "Medição da pressão de baixa",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Amperagem",
+      description: "Medição da amperagem",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+    {
+      id: "air_flow",
+      label: "Foto do Termostato",
+      description: "Foto do Termostato",
+      icon: <Wrench className="w-5 h-5" />,
+      preventiveOnly: true,
+    },
+  ],
+};
 
 export default function AddEnvironment() {
   const navigate = useNavigate();
@@ -26,11 +392,6 @@ export default function AddEnvironment() {
       setTaskFiles((prev) => ({ ...prev, [taskId]: file }));
       setTaskPreviews((prev) => ({ ...prev, [taskId]: url }));
     }
-  };
-
-  const triggerFilePicker = (taskId: string) => {
-    const input = document.getElementById(`file-${taskId}`) as HTMLInputElement;
-    input?.click();
   };
 
   const handleSave = () => {
@@ -130,7 +491,7 @@ export default function AddEnvironment() {
                 className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${
                   system === type
                     ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary text-muted-foreground hover:bg-secondary/80"
+                    : "bg-secondary text-muted-foreground hover:bg-secondary"
                 }`}
               >
                 {type}
@@ -151,59 +512,17 @@ export default function AddEnvironment() {
               .filter(
                 (task) => !task.preventiveOnly || protocolType === "preventive",
               )
-              .map((task) => {
-                const previewUrl = taskPreviews[task.id];
-                return (
-                  <div key={task.id}>
-                    <Input
-                      type="file"
-                      id={`file-${task.id}`}
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileSelect(task.id, e.target.files?.[0] || null)
-                      }
-                    />
-                    <Card
-                      onClick={() => triggerFilePicker(task.id)}
-                      className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${
-                        previewUrl
-                          ? "border-primary bg-primary/10"
-                          : "border-transparent bg-muted hover:border-border"
-                      }`}
-                    >
-                      <div className="w-12 h-12 bg-card text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                        {task.icon}
-                      </div>
-                      <div className="grow">
-                        <h4 className="text-sm font-bold text-foreground tracking-tight">
-                          {task.label}
-                        </h4>
-                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
-                          {task.description}
-                        </p>
-                      </div>
-                      <div
-                        className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${
-                          previewUrl
-                            ? "border-2 border-primary shadow-md"
-                            : "bg-secondary text-muted-foreground rounded-full"
-                        }`}
-                      >
-                        {previewUrl ? (
-                          <img
-                            src={previewUrl}
-                            alt="Preview"
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <Camera className="w-4 h-4" />
-                        )}
-                      </div>
-                    </Card>
-                  </div>
-                );
-              })}
+              .map((task) => (
+                <PhotoUpload
+                  key={task.id}
+                  id={task.id}
+                  label={task.label}
+                  description={task.description}
+                  icon={task.icon}
+                  previewUrl={taskPreviews[task.id]}
+                  onSelect={(file) => handleFileSelect(task.id, file)}
+                />
+              ))}
           </div>
         </section>
 

@@ -2,8 +2,8 @@ FROM oven/bun:alpine AS builder
 
 WORKDIR /usr/src/app
 
-# Copy package files and lockfile (optional wildcard to prevent failing if not present)
-COPY package.json bun.lockb* ./
+# Copy package files and lockfile (lockfile is required for reproducible installs)
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 COPY . .
@@ -11,7 +11,7 @@ RUN bun run build
 
 # Install production dependencies in a separate directory
 WORKDIR /usr/src/prod-app
-COPY package.json bun.lockb* ./
+COPY package.json bun.lock ./
 RUN bun install --production --frozen-lockfile
 
 # Runner stage stays on Node.js alpine for production stability

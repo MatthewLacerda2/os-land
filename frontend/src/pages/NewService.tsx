@@ -1,3 +1,4 @@
+import FormField from "@/components/common/FormField";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -80,8 +81,7 @@ export default function NewService() {
 
           <Card className="border-border shadow-sm rounded-3xl overflow-hidden">
             <CardContent className="grid gap-5 pt-6">
-              <div className="space-y-2">
-                <Label htmlFor="osNumber">Número da OS</Label>
+              <FormField label="Número da OS" htmlFor="osNumber">
                 <Input
                   id="osNumber"
                   className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
@@ -91,10 +91,9 @@ export default function NewService() {
                     updateOrderDetails({ osNumber: e.target.value })
                   }
                 />
-              </div>
+              </FormField>
 
-              <div className="space-y-2">
-                <Label htmlFor="agencyCode">Prefixo da Agência</Label>
+              <FormField label="Prefixo da Agência" htmlFor="agencyCode">
                 <Input
                   id="agencyCode"
                   className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
@@ -104,15 +103,9 @@ export default function NewService() {
                     updateOrderDetails({ agency: e.target.value })
                   }
                 />
-              </div>
+              </FormField>
 
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="agencyName">Nome da Agência</Label>
-                  <span className="text-xs text-muted-foreground uppercase font-bold">
-                    Opcional
-                  </span>
-                </div>
+              <FormField label="Nome da Agência" htmlFor="agencyName" optional>
                 <Input
                   id="agencyName"
                   className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
@@ -122,10 +115,9 @@ export default function NewService() {
                     updateOrderDetails({ agencyName: e.target.value })
                   }
                 />
-              </div>
+              </FormField>
 
-              <div className="space-y-2">
-                <Label>Estado/UF</Label>
+              <FormField label="Estado/UF">
                 <Select
                   value={currentOrder.state}
                   onValueChange={(val) => updateOrderDetails({ state: val })}
@@ -141,15 +133,9 @@ export default function NewService() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </FormField>
 
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="company">Empresa</Label>
-                  <span className="text-xs text-muted-foreground uppercase font-bold">
-                    Opcional
-                  </span>
-                </div>
+              <FormField label="Empresa" htmlFor="company" optional>
                 <Input
                   id="company"
                   className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
@@ -159,15 +145,9 @@ export default function NewService() {
                     updateOrderDetails({ company: e.target.value })
                   }
                 />
-              </div>
+              </FormField>
 
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="assetNumber">Nº de bem</Label>
-                  <span className="text-xs text-muted-foreground uppercase font-bold">
-                    Opcional
-                  </span>
-                </div>
+              <FormField label="Nº de bem" htmlFor="assetNumber" optional>
                 <Input
                   id="assetNumber"
                   className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
@@ -177,10 +157,9 @@ export default function NewService() {
                     updateOrderDetails({ assetNumber: e.target.value })
                   }
                 />
-              </div>
+              </FormField>
 
-              <div className="space-y-2">
-                <Label htmlFor="environmentName">Nome do Ambiente</Label>
+              <FormField label="Nome do Ambiente" htmlFor="environmentName">
                 <Input
                   id="environmentName"
                   className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
@@ -190,7 +169,7 @@ export default function NewService() {
                     updateOrderDetails({ environmentName: e.target.value })
                   }
                 />
-              </div>
+              </FormField>
 
               <div className="space-y-2">
                 <Label>Protocolo de Manutenção</Label>

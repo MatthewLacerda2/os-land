@@ -1,5 +1,5 @@
 import { maintenanceApi, type MaintenanceItem } from "@/api/maintenance-api";
-import OSItem from "@/components/pages/os-item";
+import OSItem from "@/components/history/os-item";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Plus } from "lucide-react";
