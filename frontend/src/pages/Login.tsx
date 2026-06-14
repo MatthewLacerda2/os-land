@@ -45,40 +45,40 @@ const Login: React.FC = () => {
         />
       </div>
 
-      <Card className="w-full max-w-sm border-slate-200 shadow-xl shadow-slate-200/50 rounded-3xl overflow-hidden">
+      <Card className="w-full max-w-sm border-border shadow-xl shadow-foreground/5 rounded-3xl overflow-hidden">
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-2xl font-bold text-slate-800 tracking-tight">OS-Land</CardTitle>
-          <CardDescription className="text-slate-500">HVAC Management System</CardDescription>
+          <CardTitle className="text-2xl font-bold text-foreground tracking-tight">OS-Land</CardTitle>
+          <CardDescription className="text-muted-foreground">HVAC Management System</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-700 ml-1">Email</label>
+              <label className="text-sm font-semibold text-foreground ml-1">Email</label>
               <Input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@osland.com"
-                className="rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-blue-500"
+                className="rounded-xl bg-muted border-border focus-visible:ring-ring"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
+              <label className="text-sm font-semibold text-foreground ml-1">Password</label>
               <Input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-blue-500"
+                className="rounded-xl bg-muted border-border focus-visible:ring-ring"
               />
             </div>
 
             {error && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100 animate-in fade-in zoom-in duration-300">
+              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-xl border border-destructive/20 animate-in fade-in zoom-in duration-300">
                 {error}
               </div>
             )}
@@ -88,11 +88,11 @@ const Login: React.FC = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full py-6 text-base font-bold bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-100 transition-all active:scale-[0.98]"
+              className="w-full py-6 text-base font-bold bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">
-                  <Spinner className="text-white" />
+                  <Spinner className="text-primary-foreground" />
                   <span>Logging in...</span>
                 </div>
               ) : (

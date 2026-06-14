@@ -139,7 +139,7 @@ export default function AddEnvironment() {
   }
 
   return (
-    <div className="flex flex-col min-h-full bg-white pb-10">
+    <div className="flex flex-col min-h-full bg-card pb-10">
       {/* Header Context */}
       <div className="p-6 space-y-4">
         <h2 className="text-4xl font-bold text-primary">Detalhes do Equipamento</h2>
@@ -149,13 +149,13 @@ export default function AddEnvironment() {
         {/* Fault Description — only for corrective maintenance */}
         {protocolType !== 'preventive' && (
           <section className="space-y-2">
-            <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
               <div className="w-1 h-1 bg-primary rounded-full"></div>
               Falha Detectada
             </h3>
             <Textarea
               id="faultDescription"
-              className="min-h-[100px] rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+              className="min-h-[100px] rounded-xl bg-muted border-border focus-visible:ring-primary"
               placeholder="Descreva a falha detectada, sintomas e observações visuais deste ambiente..."
               value={faultDescription}
               onChange={(e) => setFaultDescription(e.target.value)}
@@ -165,7 +165,7 @@ export default function AddEnvironment() {
 
         {/* Set Point */}
         <section className="space-y-2">
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
             <div className="w-1 h-1 bg-primary rounded-full"></div>
             Set Point
           </h3>
@@ -174,18 +174,18 @@ export default function AddEnvironment() {
               id="setPoint"
               type="number"
               inputMode="decimal"
-              className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary pr-12"
+              className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary pr-12"
               placeholder="ex: 23"
               value={setPoint}
               onChange={(e) => setSetPoint(e.target.value)}
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">°C</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">°C</span>
           </div>
         </section>
 
         {/* System Designation Chips */}
         <section className="space-y-4">
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
             <div className="w-1 h-1 bg-primary rounded-full"></div>
             Designação do Sistema
           </h3>
@@ -200,8 +200,8 @@ export default function AddEnvironment() {
                   setTaskFiles({})
                 }}
                 className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${system === type
-                  ? 'bg-primary text-white shadow-md'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
                   }`}
               >
                 {type}
@@ -212,7 +212,7 @@ export default function AddEnvironment() {
 
         {/* Component Verification List */}
         <section className="space-y-4">
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
             <div className="w-1 h-1 bg-primary rounded-full"></div>
             Verificação de Componentes
           </h3>
@@ -233,17 +233,17 @@ export default function AddEnvironment() {
                     />
                     <Card
                       onClick={() => triggerFilePicker(task.id)}
-                      className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${previewUrl ? 'border-primary bg-blue-50/30' : 'border-transparent bg-slate-50 hover:border-slate-200'
+                      className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${previewUrl ? 'border-primary bg-primary/10' : 'border-transparent bg-muted hover:border-border'
                         }`}
                     >
-                      <div className="w-12 h-12 bg-white text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                      <div className="w-12 h-12 bg-card text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                         {task.icon}
                       </div>
                       <div className="grow">
-                        <h4 className="text-sm font-bold text-slate-800 tracking-tight">{task.label}</h4>
-                        <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{task.description}</p>
+                        <h4 className="text-sm font-bold text-foreground tracking-tight">{task.label}</h4>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{task.description}</p>
                       </div>
-                      <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${previewUrl ? 'border-2 border-primary shadow-md' : 'bg-slate-100 text-slate-300 rounded-full'
+                      <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${previewUrl ? 'border-2 border-primary shadow-md' : 'bg-secondary text-muted-foreground rounded-full'
                         }`}>
                         {previewUrl ? (
                           <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
@@ -262,7 +262,7 @@ export default function AddEnvironment() {
         <div className="pt-4">
           <Button
             onClick={handleSave}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl gap-3 text-base font-bold"
           >
             <CheckCircle2 className="w-5 h-5" />
             Salvar Ambiente

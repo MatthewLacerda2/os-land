@@ -57,7 +57,7 @@ export default function NewService() {
       {/* Page Header */}
       <div className="p-6 pb-2">
         <h2 className="text-3xl font-bold text-primary">Informações Básicas</h2>
-        <p className="text-sm text-slate-500 mt-1 leading-relaxed">
+        <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
           Preencha os detalhes iniciais para estabelecer a base do serviço.
         </p>
       </div>
@@ -70,13 +70,13 @@ export default function NewService() {
             <h3 className="font-bold uppercase tracking-wider text-xs">Identificação do Serviço</h3>
           </div>
 
-          <Card className="border-slate-100 shadow-sm rounded-3xl overflow-hidden">
+          <Card className="border-border shadow-sm rounded-3xl overflow-hidden">
             <CardContent className="grid gap-5 pt-6">
               <div className="space-y-2">
                 <Label htmlFor="osNumber">Número da OS</Label>
                 <Input
                   id="osNumber"
-                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
                   placeholder="ex: OS-2023-8912"
                   value={currentOrder.osNumber}
                   onChange={(e) => updateOrderDetails({ osNumber: e.target.value })}
@@ -87,7 +87,7 @@ export default function NewService() {
                 <Label htmlFor="agencyCode">Prefixo da Agência</Label>
                 <Input
                   id="agencyCode"
-                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
                   placeholder="ID da Agência"
                   value={currentOrder.agency}
                   onChange={(e) => updateOrderDetails({ agency: e.target.value })}
@@ -97,11 +97,11 @@ export default function NewService() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label htmlFor="agencyName">Nome da Agência</Label>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Opcional</span>
                 </div>
                 <Input
                   id="agencyName"
-                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
                   placeholder="Nome da Unidade"
                   value={currentOrder.agencyName}
                   onChange={(e) => updateOrderDetails({ agencyName: e.target.value })}
@@ -114,7 +114,7 @@ export default function NewService() {
                   value={currentOrder.state}
                   onValueChange={(val) => updateOrderDetails({ state: val })}
                 >
-                  <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-slate-200">
+                  <SelectTrigger className="h-12 rounded-xl bg-muted border-border">
                     <SelectValue placeholder="Selecionar Região" />
                   </SelectTrigger>
                   <SelectContent>
@@ -130,11 +130,11 @@ export default function NewService() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label htmlFor="company">Empresa</Label>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Opcional</span>
                 </div>
                 <Input
                   id="company"
-                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
                   placeholder="Contratante / Cliente"
                   value={currentOrder.company}
                   onChange={(e) => updateOrderDetails({ company: e.target.value })}
@@ -144,11 +144,11 @@ export default function NewService() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label htmlFor="assetNumber">Nº de bem</Label>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Opcional</span>
                 </div>
                 <Input
                   id="assetNumber"
-                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
                   placeholder="Número de patrimônio"
                   value={currentOrder.assetNumber}
                   onChange={(e) => updateOrderDetails({ assetNumber: e.target.value })}
@@ -159,7 +159,7 @@ export default function NewService() {
                 <Label htmlFor="environmentName">Nome do Ambiente</Label>
                 <Input
                   id="environmentName"
-                  className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+                  className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary"
                   placeholder="ex: Sala de Servidores A"
                   value={currentOrder.environmentName}
                   onChange={(e) => updateOrderDetails({ environmentName: e.target.value })}
@@ -168,12 +168,12 @@ export default function NewService() {
 
               <div className="space-y-2">
                 <Label>Protocolo de Manutenção</Label>
-                <div className="bg-slate-100 p-1 rounded-2xl flex gap-1">
+                <div className="bg-secondary p-1 rounded-2xl flex gap-1">
                   <Button
                     type="button"
                     variant={currentOrder.protocolType === 'corrective' ? 'default' : 'ghost'}
                     onClick={() => updateOrderDetails({ protocolType: 'corrective' })}
-                    className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${currentOrder.protocolType === 'corrective' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
+                    className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${currentOrder.protocolType === 'corrective' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:bg-secondary'
                       }`}
                   >
                     <Wrench className="w-4 h-4" />
@@ -183,7 +183,7 @@ export default function NewService() {
                     type="button"
                     variant={currentOrder.protocolType === 'preventive' ? 'default' : 'ghost'}
                     onClick={() => updateOrderDetails({ protocolType: 'preventive' })}
-                    className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${currentOrder.protocolType === 'preventive' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'
+                    className={`flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-bold transition-all ${currentOrder.protocolType === 'preventive' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:bg-secondary'
                       }`}
                   >
                     <Calendar className="w-4 h-4" />
@@ -199,7 +199,7 @@ export default function NewService() {
         <div className="flex justify-end pt-4">
           <Button
             onClick={handleNext}
-            className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-lg gap-2 text-base font-bold"
+            className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg gap-2 text-base font-bold"
           >
             Próximo
             <ChevronRight className="w-5 h-5" />
