@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { Camera } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -21,7 +22,7 @@ export default function PhotoUpload({ id, label, description, icon, previewUrl, 
 
   return (
     <div>
-      <input
+      <Input
         type="file"
         id={inputId}
         className="hidden"
