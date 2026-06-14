@@ -8,8 +8,8 @@ async function bootstrap() {
   
   // Enable global validation (Like Pydantic in FastAPI)
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: false,
-    forbidNonWhitelisted: false,
+    whitelist: true,
+    forbidNonWhitelisted: true,
     transform: true,
   }));
 

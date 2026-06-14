@@ -107,10 +107,6 @@ export class CreateMaintenanceDto {
   @ValidateNested({ each: true })
   @Type(() => CreateEquipmentDto)
   equipments: CreateEquipmentDto[];
-
-  // These fields are handled by the file interceptor but might appear in the body
-  @IsOptional()
-  'equipment-photos'?: any;
 }
 
 export class MaintenanceCreateResponseDto {
