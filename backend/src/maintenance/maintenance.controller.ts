@@ -44,14 +44,16 @@ export class MaintenanceController {
     @Body() data: CreateMaintenanceDto,
     @UploadedFiles() files: {
       'equipment-photos'?: Express.Multer.File[],
-    }
+    },
+    @Req() req: Request
   ): Promise<MaintenanceCreateResponseDto> {
     // If the data comes from a Multipart form, 'equipments' will be a string
     if (typeof data.equipments === 'string') {
       data.equipments = JSON.parse(data.equipments);
     }
 
-    const savedOrder = await this.maintenanceService.create(data, files);
+    const user = req.user as any;
+    const savedOrder = await this.maintenanceService.create(data, files, user.userId);
     return {
       id: savedOrder.id,
       agency: savedOrder.agency,

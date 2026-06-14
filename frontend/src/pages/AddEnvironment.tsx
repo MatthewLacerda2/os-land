@@ -1,10 +1,9 @@
+import PhotoUpload from '@/components/common/PhotoUpload'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useServiceStore } from '@/store/useServiceStore'
 import {
-  Camera,
   CheckCircle2,
   Settings,
   Waves,
@@ -108,11 +107,6 @@ export default function AddEnvironment() {
     }
   }
 
-  const triggerFilePicker = (taskId: string) => {
-    const input = document.getElementById(`file-${taskId}`) as HTMLInputElement
-    input?.click()
-  }
-
   const handleSave = () => {
     const requiredTasks = PHOTO_TASKS[system]
     const allPhotosCaptured = requiredTasks.every(task => !!taskFiles[task.id])
@@ -201,7 +195,7 @@ export default function AddEnvironment() {
                 }}
                 className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${system === type
                   ? 'bg-primary text-primary-foreground shadow-md'
-                  : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                  : 'bg-secondary text-muted-foreground hover:bg-secondary'
                   }`}
               >
                 {type}
@@ -220,41 +214,17 @@ export default function AddEnvironment() {
           <div className="space-y-3">
             {PHOTO_TASKS[system]
               .filter(task => !task.preventiveOnly || protocolType === 'preventive')
-              .map((task) => {
-                const previewUrl = taskPreviews[task.id]
-                return (
-                  <div key={task.id}>
-                    <input
-                      type="file"
-                      id={`file-${task.id}`}
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) => handleFileSelect(task.id, e.target.files?.[0] || null)}
-                    />
-                    <Card
-                      onClick={() => triggerFilePicker(task.id)}
-                      className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${previewUrl ? 'border-primary bg-primary/10' : 'border-transparent bg-muted hover:border-border'
-                        }`}
-                    >
-                      <div className="w-12 h-12 bg-card text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                        {task.icon}
-                      </div>
-                      <div className="grow">
-                        <h4 className="text-sm font-bold text-foreground tracking-tight">{task.label}</h4>
-                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{task.description}</p>
-                      </div>
-                      <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${previewUrl ? 'border-2 border-primary shadow-md' : 'bg-secondary text-muted-foreground rounded-full'
-                        }`}>
-                        {previewUrl ? (
-                          <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                        ) : (
-                          <Camera className="w-4 h-4" />
-                        )}
-                      </div>
-                    </Card>
-                  </div>
-                )
-              })}
+              .map((task) => (
+                <PhotoUpload
+                  key={task.id}
+                  id={task.id}
+                  label={task.label}
+                  description={task.description}
+                  icon={task.icon}
+                  previewUrl={taskPreviews[task.id]}
+                  onSelect={(file) => handleFileSelect(task.id, file)}
+                />
+              ))}
           </div>
         </section>
 
