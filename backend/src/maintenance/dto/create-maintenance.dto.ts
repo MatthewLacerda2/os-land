@@ -41,11 +41,6 @@ export class CreateMaintenanceDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  technicianId: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   osNumber: string;
 
   @ApiProperty()

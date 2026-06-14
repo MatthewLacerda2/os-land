@@ -21,16 +21,11 @@ export default function ReviewService() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleConfirm = async () => {
-    // Get real user ID from localStorage
-    const storedUser = localStorage.getItem('os_land_user')
-    const user = storedUser ? JSON.parse(storedUser) : null
-    const userId = user?.id || '00000000-0000-0000-0000-000000000000'
-
     setIsSubmitting(true)
     try {
-      // Map store data to API request format
+      // Map store data to API request format.
+      // The technician is derived server-side from the authenticated JWT.
       const payload: CreateMaintenanceRequest = {
-        technicianId: userId,
         osNumber: currentOrder.osNumber,
         agency: currentOrder.agency,
         agencyName: currentOrder.agencyName,
