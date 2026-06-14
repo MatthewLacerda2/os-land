@@ -22,3 +22,6 @@ backend/uploads/*
 !backend/uploads/.gitkeep
 
 auxts.ts
+
+# Claude Code harness worktrees (transient)
+.claude/worktrees/

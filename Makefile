@@ -1,38 +1,51 @@
-# The single task runner. CI calls these exact targets so local and CI cannot
-# diverge. Scope your run to the layer you touched.
+# Single task runner for every quality gate. There is no GitHub-side CI by
+# design (solo project); the coding agent runs `make check` before pushing, so
+# the gates live in one place and never drift.
+# Everything is driven by Bun. Override with: make check BUN=bun
 
-.PHONY: check backend frontend \
-        back-install back-lint back-build back-test \
-        front-install front-lint front-build front-test
+BUN ?= bun
 
+.DEFAULT_GOAL := check
+
+# ---------------------------------------------------------------------------
+# Aggregate gates
+# ---------------------------------------------------------------------------
+.PHONY: check backend frontend
 check: backend frontend
 
 backend: back-lint back-build back-test
 frontend: front-lint front-build front-test
 
-# --- Backend (NestJS) -------------------------------------------------------
-back-install:
-	cd backend && bun install
-
+# ---------------------------------------------------------------------------
+# Backend gates  (run from backend/, driven by $(BUN))
+# ---------------------------------------------------------------------------
+.PHONY: back-lint back-build back-test back-install
 back-lint:
-	cd backend && bun run lint
+	cd backend && $(BUN) run lint
 
 back-build:
-	cd backend && bun run build
+	cd backend && $(BUN) run build
 
+# jest has no spec files yet; --passWithNoTests keeps the gate green until tests exist.
 back-test:
-	cd backend && bun run test
+	cd backend && $(BUN) run test -- --passWithNoTests
 
-# --- Frontend (React/Vite) --------------------------------------------------
-front-install:
-	cd frontend && bun install
+back-install:
+	cd backend && $(BUN) install
 
+# ---------------------------------------------------------------------------
+# Frontend gates  (run from frontend/, driven by $(BUN))
+# ---------------------------------------------------------------------------
+.PHONY: front-lint front-build front-test front-install
 front-lint:
-	cd frontend && bun run lint
+	cd frontend && $(BUN) run lint
 
 front-build:
-	cd frontend && bun run build
+	cd frontend && $(BUN) run build
 
-# No frontend test suite yet; placeholder keeps the gate shape stable.
+# No frontend test script yet; placeholder keeps the gate green until tests exist.
 front-test:
-	@echo "front-test: no frontend test suite yet"
+	@echo "no frontend tests yet"
+
+front-install:
+	cd frontend && $(BUN) install

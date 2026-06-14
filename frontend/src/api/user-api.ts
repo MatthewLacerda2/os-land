@@ -1,6 +1,6 @@
-import client from './client';
+import client from "./client";
 
-export type UserRole = 'manager' | 'technician';
+export type UserRole = "manager" | "technician";
 
 export interface CreateUserRequest {
   name: string;
@@ -32,12 +32,12 @@ export interface LoginResponse {
 
 export const userApi = {
   createUser: async (data: CreateUserRequest): Promise<UserResponse> => {
-    const response = await client.post('/user/create', data);
+    const response = await client.post("/user/create", data);
     return response.data;
   },
 
   login: async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await client.post('/user/login', data);
+    const response = await client.post("/user/login", data);
     return response.data;
   },
 };

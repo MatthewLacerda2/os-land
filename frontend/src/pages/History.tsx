@@ -1,43 +1,43 @@
-import { maintenanceApi, type MaintenanceItem } from '@/api/maintenance-api'
-import OSItem from '@/components/history/os-item'
-import { Button } from '@/components/ui/button'
-import { Spinner } from '@/components/ui/spinner'
-import { Plus } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { maintenanceApi, type MaintenanceItem } from "@/api/maintenance-api";
+import OSItem from "@/components/history/os-item";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function History() {
-  const [services, setServices] = useState<MaintenanceItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [services, setServices] = useState<MaintenanceItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        setIsLoading(true)
-        const response = await maintenanceApi.list(0, 50)
-        setServices(response.items)
+        setIsLoading(true);
+        const response = await maintenanceApi.list(0, 50);
+        setServices(response.items);
       } catch (err: unknown) {
-        setError('Erro ao carregar o histórico. Tente novamente mais tarde.')
-        console.error('Fetch history error:', err)
+        setError("Erro ao carregar o histórico. Tente novamente mais tarde.");
+        console.error("Fetch history error:", err);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchHistory()
-  }, [])
+    fetchHistory();
+  }, []);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+    const date = new Date(dateString);
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-full">
@@ -49,22 +49,27 @@ export default function History() {
           </h1>
         </div>
         <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-muted-foreground">
-          <span className="text-[10px] font-bold">LY</span>
+          <span className="text-xs font-bold">LY</span>
         </div>
       </header>
 
       <div className="p-6 max-w-2xl mx-auto space-y-6 w-full">
         <div className="space-y-1 mb-8">
-          <h1 className="text-3xl font-bold text-primary">Histórico de Serviços</h1>
+          <h1 className="text-3xl font-bold text-primary">
+            Histórico de Serviços
+          </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Registro completo de ordens de serviço executadas, documentação técnica e status de aprovação.
+            Registro completo de ordens de serviço executadas, documentação
+            técnica e status de aprovação.
           </p>
         </div>
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Spinner className="w-8 h-8 text-primary" />
-            <p className="text-sm text-muted-foreground font-medium">Carregando histórico...</p>
+            <p className="text-sm text-muted-foreground font-medium">
+              Carregando histórico...
+            </p>
           </div>
         ) : error ? (
           <div className="p-6 text-center bg-destructive/10 rounded-3xl border border-destructive/20">
@@ -72,8 +77,9 @@ export default function History() {
           </div>
         ) : services.length === 0 ? (
           <div className="py-6 text-center bg-muted rounded-3xl border border-dashed border-border">
-            <p className="text-sm text-muted-foreground font-medium">Nenhuma ordem de serviço encontrada.</p>
-
+            <p className="text-sm text-muted-foreground font-medium">
+              Nenhuma ordem de serviço encontrada.
+            </p>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -82,7 +88,7 @@ export default function History() {
                 key={service.id}
                 id={service.id}
                 number={service.osNumber}
-                description={service.company || 'Manutenção Geral'}
+                description={service.company || "Manutenção Geral"}
                 location={service.location}
                 date={formatDate(service.createdAt)}
               />
@@ -101,5 +107,5 @@ export default function History() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

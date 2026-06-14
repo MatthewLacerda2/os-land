@@ -1,39 +1,49 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { userApi } from '../api/user-api';
-import logo from '../assets/checkout360.png';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { Spinner } from '../components/ui/spinner';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { userApi } from "../api/user-api";
+import logo from "../assets/checkout360.png";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Spinner } from "../components/ui/spinner";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await userApi.login({ email, password });
-      localStorage.setItem('os_land_token', response.jwt);
-      localStorage.setItem('os_land_user', JSON.stringify({
-        id: response.id,
-        name: response.name,
-        email: response.email
-      }));
-      navigate('/');
+      localStorage.setItem("os_land_token", response.jwt);
+      localStorage.setItem(
+        "os_land_user",
+        JSON.stringify({
+          id: response.id,
+          name: response.name,
+          email: response.email,
+        }),
+      );
+      navigate("/");
     } catch (err: unknown) {
-      const message = axios.isAxiosError<{ message?: string }>(err)
+      const message = axios.isAxiosError(err)
         ? err.response?.data?.message
         : undefined;
-      setError(message || 'Login failed. Please check your credentials.');
+      setError(message || "Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -42,23 +52,29 @@ const Login: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-6">
       <div className="flex flex-col items-center mb-8">
-        <img 
-          src={logo} 
-          alt="Checkout360 Logo" 
+        <img
+          src={logo}
+          alt="Checkout360 Logo"
           className="w-24 h-auto mb-4 drop-shadow-md"
         />
       </div>
 
       <Card className="w-full max-w-sm border-border shadow-xl shadow-foreground/5 rounded-3xl overflow-hidden">
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-2xl font-bold text-foreground tracking-tight">OS-Land</CardTitle>
-          <CardDescription className="text-muted-foreground">HVAC Management System</CardDescription>
+          <CardTitle className="text-2xl font-bold text-foreground tracking-tight">
+            OS-Land
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            HVAC Management System
+          </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-foreground ml-1">Email</label>
+              <label className="text-sm font-semibold text-foreground ml-1">
+                Email
+              </label>
               <Input
                 type="email"
                 required
@@ -70,7 +86,9 @@ const Login: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-foreground ml-1">Password</label>
+              <label className="text-sm font-semibold text-foreground ml-1">
+                Password
+              </label>
               <Input
                 type="password"
                 required
@@ -100,7 +118,7 @@ const Login: React.FC = () => {
                   <span>Logging in...</span>
                 </div>
               ) : (
-                'Login'
+                "Login"
               )}
             </Button>
           </CardFooter>
