@@ -61,7 +61,11 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        - VITE_API_URL=${VITE_API_URL:-http://localhost:3000}
+        # Empty by default: the SPA calls same-origin /api and /uploads, which
+        # nginx proxies to the backend (see nginx.conf). This lets the app be
+        # reached from any device/IP on the LAN without rebuilding. Set
+        # VITE_API_URL only to target a different origin.
+        - VITE_API_URL=${VITE_API_URL:-}
     container_name: osland_frontend
     logging: *default-logging
     ports:

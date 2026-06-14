@@ -102,6 +102,12 @@ docker compose up --build  # postgres + backend (:3000) + frontend (:80)
 
 API docs (Swagger) are served at `http://localhost:3000/api/docs`.
 
+The frontend calls the backend through same-origin relative URLs (`/api`,
+`/uploads`), which nginx proxies to the backend. So once it's up you can reach
+the whole app from another device on the same network at `http://<host-LAN-IP>`
+(port 80) — no rebuild or `VITE_API_URL` needed. Set `VITE_API_URL` only if you
+want the SPA to target a different origin.
+
 ## Intentional non-goals (documented upgrade paths)
 
 The prototype deliberately stops short in a few places so the upgrade is a
