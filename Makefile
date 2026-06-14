@@ -1,4 +1,6 @@
-# Single task runner. CI invokes these exact targets so local and CI never drift.
+# Single task runner for every quality gate. There is no GitHub-side CI by
+# design (solo project); the coding agent runs `make check` before pushing, so
+# the gates live in one place and never drift.
 # Everything is driven by Bun. Override with: make check BUN=bun
 
 BUN ?= bun
