@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EnvironmentPhoto } from './entities/environment-photo.entity';
 import { EnvironmentService } from './entities/environment-service.entity';
 import { Environment } from './entities/environment.entity';
 import { MaintenanceOrder } from './entities/maintenance-order.entity';
@@ -17,12 +17,21 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
+import { LoggingInterceptor } from './common/logging.interceptor';
+import { validateEnv } from './config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validateEnv,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     TypeOrmModule.forRoot({
       // ... existing config
       type: 'postgres',
@@ -35,9 +44,8 @@ import { RolesGuard } from './auth/roles.guard';
         User, 
         MaintenanceOrder, 
         Environment, 
-        EnvironmentService, 
-        MaintenancePhoto, 
-        EnvironmentPhoto
+        EnvironmentService,
+        MaintenancePhoto
       ],
       synchronize: true,
     }),
@@ -54,11 +62,19 @@ import { RolesGuard } from './auth/roles.guard';
     AppService,
     {
       provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
   ],
 })

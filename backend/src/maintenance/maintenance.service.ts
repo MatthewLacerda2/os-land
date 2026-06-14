@@ -17,6 +17,7 @@ export class MaintenanceService {
     files: {
       'equipment-photos'?: Express.Multer.File[];
     },
+    technicianId: string,
   ) {
     const uploadDir = path.join(process.cwd(), 'uploads');
     if (!existsSync(uploadDir)) {
@@ -28,6 +29,7 @@ export class MaintenanceService {
     try {
       const savedOrder = await this.maintenanceRepository.createOrderWithEnvironments(
         data,
+        technicianId,
         async (
           _envService: EnvironmentService,
           equipmentIndex: number,

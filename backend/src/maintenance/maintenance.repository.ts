@@ -29,13 +29,14 @@ export class MaintenanceRepository {
    */
   async createOrderWithEnvironments(
     data: CreateMaintenanceDto,
+    technicianId: string,
     persistPhotos: (
       envService: EnvironmentService,
       equipmentIndex: number,
     ) => Promise<PersistedPhoto[]>,
   ): Promise<MaintenanceOrder> {
     return this.dataSource.transaction(async (tem: EntityManager) => {
-      const creator = await tem.findOneBy(User, { id: data.technicianId });
+      const creator = await tem.findOneBy(User, { id: technicianId });
       if (!creator) {
         throw new NotFoundException('User not found');
       }

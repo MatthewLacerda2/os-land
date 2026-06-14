@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EnvironmentService } from './environment-service.entity';
+import { ProtocolType } from './environment.entity';
 import { User } from './user.entity';
 
 @Entity('maintenance_orders')
@@ -36,11 +37,11 @@ export class MaintenanceOrder {
 
   @Column({
     type: 'enum',
-    enum: ['corrective', 'preventive'],
+    enum: ProtocolType,
     name: 'protocol_type',
-    default: 'corrective',
+    default: ProtocolType.CORRECTIVE,
   })
-  protocolType: string;
+  protocolType: ProtocolType;
 
   @Column({ name: 'environment_name', nullable: true })
   environmentName: string;

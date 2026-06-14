@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from '../entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,12 +19,12 @@ export class UserService {
   async create(userData: CreateUserDto): Promise<User> {
 
     if (userData.password !== userData.password_confirmation) {
-      throw new Error('Passwords do not match');
+      throw new BadRequestException('Passwords do not match');
     }
 
     const existingUser = await this.findOneByEmail(userData.email);
     if (existingUser) {
-      throw new Error('User already exists');
+      throw new ConflictException('User already exists');
     }
 
     const salt = await bcrypt.genSalt();
