@@ -23,7 +23,7 @@ export class UserController {
   @ApiResponse({ status: 201, type: UserResponseDto })
   async createUser(@Body() data: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userService.create(data);
-    
+
     return {
       id: user.id,
       name: user.name,

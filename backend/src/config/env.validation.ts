@@ -17,9 +17,7 @@ export function validateEnv(config: Record<string, unknown>) {
   });
 
   if (errors.length > 0) {
-    throw new Error(
-      `Invalid environment configuration: ${errors.toString()}`,
-    );
+    throw new Error(`Invalid environment configuration: ${errors.toString()}`);
   }
 
   return validatedConfig;

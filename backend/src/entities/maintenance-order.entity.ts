@@ -1,4 +1,12 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { EnvironmentService } from './environment-service.entity';
 import { ProtocolType } from './environment.entity';
 import { User } from './user.entity';
@@ -53,6 +61,9 @@ export class MaintenanceOrder {
   @JoinColumn({ name: 'technicianId' })
   creator: User;
 
-  @OneToMany(() => EnvironmentService, (envService: EnvironmentService) => envService.order)
+  @OneToMany(
+    () => EnvironmentService,
+    (envService: EnvironmentService) => envService.order,
+  )
   environmentServices: EnvironmentService[];
 }

@@ -1,7 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { DesignatedSystem, ProtocolType } from '../../entities/environment.entity';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import {
+  DesignatedSystem,
+  ProtocolType,
+} from '../../entities/environment.entity';
 
 export class CreateEquipmentPhotoDto {
   @ApiProperty({ example: 'Evaporadora' })
@@ -9,7 +19,9 @@ export class CreateEquipmentPhotoDto {
   @IsNotEmpty()
   label: string;
 
-  @ApiProperty({ description: 'Key matching the file in the multipart request' })
+  @ApiProperty({
+    description: 'Key matching the file in the multipart request',
+  })
   @IsString()
   @IsNotEmpty()
   fileKey: string;
@@ -92,11 +104,11 @@ export class CreateMaintenanceDto {
   environmentName?: string;
 
   @ApiProperty({ type: [CreateEquipmentDto] })
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: unknown }) => {
     if (typeof value === 'string') {
       try {
-        return JSON.parse(value);
-      } catch (e) {
+        return JSON.parse(value) as CreateEquipmentDto[];
+      } catch {
         return value;
       }
     }

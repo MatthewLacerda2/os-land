@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { MaintenanceOrder } from './maintenance-order.entity';
 import { Environment } from './environment.entity';
 import { MaintenancePhoto } from './maintenance-photo.entity';
