@@ -29,15 +29,15 @@ export default function MaintenanceDetailCard({
   }
 
   return (
-    <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden bg-white p-5 space-y-5">
+    <Card className="rounded-3xl shadow-sm border-border overflow-hidden bg-card p-5 space-y-5">
       {/* Header Info */}
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-md">
+        <div className="w-12 h-12 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-md">
           {getIcon(system)}
         </div>
         <div>
           <div className="flex gap-2 mt-1">
-            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md italic">
+            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-secondary text-muted-foreground rounded-md italic">
               {system}
             </span>
           </div>
@@ -46,27 +46,27 @@ export default function MaintenanceDetailCard({
 
       {/* Photo Grid */}
       <div className="space-y-3">
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
           <Camera className="w-3 h-3" />
           Evidências Fotográficas ({photos.length})
         </p>
         <div className="grid grid-cols-4 gap-2">
           {photos.map((photo) => (
-            <div key={photo.id} className="aspect-square bg-slate-50 rounded-xl border border-slate-100 overflow-hidden shadow-sm group relative">
+            <div key={photo.id} className="aspect-square bg-muted rounded-xl border border-border overflow-hidden shadow-sm group relative">
               <img
                 src={getImageUrl(photo.path)}
                 alt={photo.label}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1">
-                <span className="text-[7px] text-white font-bold truncate w-full">{photo.label}</span>
+              <div className="absolute inset-0 bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1">
+                <span className="text-[7px] text-background font-bold truncate w-full">{photo.label}</span>
               </div>
             </div>
           ))}
           {photos.length === 0 && (
-            <div className="col-span-4 py-4 flex flex-col items-center justify-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-               <Wrench className="w-5 h-5 text-slate-300 mb-1" />
-               <p className="text-[9px] font-bold text-slate-400 uppercase">Nenhuma foto anexada</p>
+            <div className="col-span-4 py-4 flex flex-col items-center justify-center bg-muted rounded-2xl border border-dashed border-border">
+               <Wrench className="w-5 h-5 text-muted-foreground mb-1" />
+               <p className="text-[9px] font-bold text-muted-foreground uppercase">Nenhuma foto anexada</p>
             </div>
           )}
         </div>

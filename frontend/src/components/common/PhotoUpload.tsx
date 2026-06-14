@@ -31,17 +31,17 @@ export default function PhotoUpload({ id, label, description, icon, previewUrl, 
       />
       <Card
         onClick={triggerFilePicker}
-        className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${previewUrl ? 'border-primary bg-blue-50/30' : 'border-transparent bg-slate-50 hover:border-slate-200'
+        className={`group rounded-2xl p-4 flex items-center gap-4 border-2 transition-all cursor-pointer shadow-sm ${previewUrl ? 'border-primary bg-primary/10' : 'border-transparent bg-muted hover:border-border'
           }`}
       >
-        <div className="w-12 h-12 bg-white text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+        <div className="w-12 h-12 bg-card text-primary rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
           {icon}
         </div>
         <div className="grow">
-          <h4 className="text-sm font-bold text-slate-800 tracking-tight">{label}</h4>
-          <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{description}</p>
+          <h4 className="text-sm font-bold text-foreground tracking-tight">{label}</h4>
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{description}</p>
         </div>
-        <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${previewUrl ? 'border-2 border-primary shadow-md' : 'bg-slate-100 text-slate-300 rounded-full'
+        <div className={`w-12 h-12 flex items-center justify-center transition-all overflow-hidden ${previewUrl ? 'border-2 border-primary shadow-md' : 'bg-secondary text-muted-foreground rounded-full'
           }`}>
           {previewUrl ? (
             <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />

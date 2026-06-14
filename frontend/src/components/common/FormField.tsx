@@ -16,7 +16,7 @@ export default function FormField({ label, htmlFor, optional, children, classNam
       {optional ? (
         <div className="flex justify-between">
           <Label htmlFor={htmlFor}>{label}</Label>
-          <span className="text-[10px] text-slate-400 uppercase font-bold">Opcional</span>
+          <span className="text-[10px] text-muted-foreground uppercase font-bold">Opcional</span>
         </div>
       ) : (
         <Label htmlFor={htmlFor}>{label}</Label>

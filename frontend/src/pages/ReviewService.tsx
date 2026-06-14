@@ -61,25 +61,25 @@ export default function ReviewService() {
   }
 
   return (
-    <div className="flex flex-col min-h-full bg-slate-50/50 pb-10">
+    <div className="flex flex-col min-h-full bg-muted/50 pb-10">
       {/* Page Header */}
       <div className="p-6">
         <h2 className="text-4xl font-bold text-primary">Revisão do Serviço</h2>
-        <p className="font-black text-slate-500 mt-2 leading-relaxed">
+        <p className="font-black text-muted-foreground mt-2 leading-relaxed">
           Verifique os detalhes abaixo antes do envio final da ordem de serviço.
         </p>
       </div>
 
       <div className="px-6 space-y-4">
         {/* General Info Section */}
-        <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden">
+        <Card className="rounded-3xl shadow-sm border-border overflow-hidden">
           <CardHeader className="flex flex-row justify-between items-center p-5 pb-2">
-            <CardTitle className="text-lg font-bold text-slate-800">Informações Gerais</CardTitle>
+            <CardTitle className="text-lg font-bold text-foreground">Informações Gerais</CardTitle>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/service/new', { state: { fromReview: true } })}
-              className="w-8 h-8 bg-slate-50 rounded-full text-primary hover:bg-blue-50 transition-colors"
+              className="w-8 h-8 bg-muted rounded-full text-primary hover:bg-primary/10 transition-colors"
             >
               <Pencil className="w-3.5 h-3.5" />
             </Button>
@@ -87,43 +87,43 @@ export default function ReviewService() {
 
           <CardContent className="p-5 pt-2 grid gap-4">
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Número da OS</p>
-              <p className="text-sm font-bold text-slate-700">{currentOrder.osNumber || 'N/A'}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Número da OS</p>
+              <p className="text-sm font-bold text-foreground">{currentOrder.osNumber || 'N/A'}</p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Agência</p>
-              <p className="text-sm font-bold text-slate-700">{currentOrder.agency || 'N/A'} {currentOrder.agencyName && `- ${currentOrder.agencyName}`}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Agência</p>
+              <p className="text-sm font-bold text-foreground">{currentOrder.agency || 'N/A'} {currentOrder.agencyName && `- ${currentOrder.agencyName}`}</p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nº de Bem</p>
-              <p className="text-sm font-bold text-slate-700">{currentOrder.assetNumber || 'N/A'}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nº de Bem</p>
+              <p className="text-sm font-bold text-foreground">{currentOrder.assetNumber || 'N/A'}</p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">UF</p>
-              <p className="text-sm font-bold text-slate-700">{currentOrder.state?.toUpperCase() || 'N/A'}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">UF</p>
+              <p className="text-sm font-bold text-foreground">{currentOrder.state?.toUpperCase() || 'N/A'}</p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocolo</p>
-              <p className="text-sm font-bold text-slate-700">{currentOrder.protocolType === 'corrective' ? 'Corretiva' : 'Preventiva'}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Protocolo</p>
+              <p className="text-sm font-bold text-foreground">{currentOrder.protocolType === 'corrective' ? 'Corretiva' : 'Preventiva'}</p>
             </div>
             {currentOrder.environmentName && (
               <div className="space-y-0.5">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ambiente</p>
-                <p className="text-sm font-bold text-slate-700">{currentOrder.environmentName}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Ambiente</p>
+                <p className="text-sm font-bold text-foreground">{currentOrder.environmentName}</p>
               </div>
             )}
           </CardContent>
         </Card>
 
         {/* Environments Section */}
-        <Card className="rounded-3xl shadow-sm border-slate-100 overflow-hidden">
+        <Card className="rounded-3xl shadow-sm border-border overflow-hidden">
           <CardHeader className="flex flex-row justify-between items-center p-5 pb-2">
-            <CardTitle className="text-lg font-bold text-slate-800">Ambientes</CardTitle>
+            <CardTitle className="text-lg font-bold text-foreground">Ambientes</CardTitle>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => navigate('/service/environment/add')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-primary rounded-full text-[10px] font-bold hover:bg-blue-100 transition-colors h-7"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-bold hover:bg-primary/20 transition-colors h-7"
             >
               <Plus className="w-3 h-3" />
               Adicionar
@@ -132,7 +132,7 @@ export default function ReviewService() {
 
           <CardContent className="p-5 pt-2 space-y-4">
             {currentOrder.environments.length === 0 ? (
-              <p className="text-xs text-slate-400 italic text-center py-4">Nenhum ambiente adicionado.</p>
+              <p className="text-xs text-muted-foreground italic text-center py-4">Nenhum ambiente adicionado.</p>
             ) : (
               currentOrder.environments.map((env) => (
                 <EnvironmentItem
@@ -153,7 +153,7 @@ export default function ReviewService() {
           <Button
             onClick={handleConfirm}
             disabled={currentOrder.environments.length === 0 || isSubmitting}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold disabled:opacity-50"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl gap-3 text-base font-bold disabled:opacity-50"
           >
             {isSubmitting ? (
               <Loader2 className="w-5 h-5 animate-spin" />

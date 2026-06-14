@@ -133,7 +133,7 @@ export default function AddEnvironment() {
   }
 
   return (
-    <div className="flex flex-col min-h-full bg-white pb-10">
+    <div className="flex flex-col min-h-full bg-card pb-10">
       {/* Header Context */}
       <div className="p-6 space-y-4">
         <h2 className="text-4xl font-bold text-primary">Detalhes do Equipamento</h2>
@@ -143,13 +143,13 @@ export default function AddEnvironment() {
         {/* Fault Description — only for corrective maintenance */}
         {protocolType !== 'preventive' && (
           <section className="space-y-2">
-            <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
               <div className="w-1 h-1 bg-primary rounded-full"></div>
               Falha Detectada
             </h3>
             <Textarea
               id="faultDescription"
-              className="min-h-[100px] rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary"
+              className="min-h-[100px] rounded-xl bg-muted border-border focus-visible:ring-primary"
               placeholder="Descreva a falha detectada, sintomas e observações visuais deste ambiente..."
               value={faultDescription}
               onChange={(e) => setFaultDescription(e.target.value)}
@@ -159,7 +159,7 @@ export default function AddEnvironment() {
 
         {/* Set Point */}
         <section className="space-y-2">
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
             <div className="w-1 h-1 bg-primary rounded-full"></div>
             Set Point
           </h3>
@@ -168,18 +168,18 @@ export default function AddEnvironment() {
               id="setPoint"
               type="number"
               inputMode="decimal"
-              className="h-12 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-primary pr-12"
+              className="h-12 rounded-xl bg-muted border-border focus-visible:ring-primary pr-12"
               placeholder="ex: 23"
               value={setPoint}
               onChange={(e) => setSetPoint(e.target.value)}
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">°C</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">°C</span>
           </div>
         </section>
 
         {/* System Designation Chips */}
         <section className="space-y-4">
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
             <div className="w-1 h-1 bg-primary rounded-full"></div>
             Designação do Sistema
           </h3>
@@ -194,8 +194,8 @@ export default function AddEnvironment() {
                   setTaskFiles({})
                 }}
                 className={`px-6 h-10 rounded-xl text-sm font-bold transition-all ${system === type
-                  ? 'bg-primary text-white shadow-md'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'bg-secondary text-muted-foreground hover:bg-secondary'
                   }`}
               >
                 {type}
@@ -206,7 +206,7 @@ export default function AddEnvironment() {
 
         {/* Component Verification List */}
         <section className="space-y-4">
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
             <div className="w-1 h-1 bg-primary rounded-full"></div>
             Verificação de Componentes
           </h3>
@@ -232,7 +232,7 @@ export default function AddEnvironment() {
         <div className="pt-4">
           <Button
             onClick={handleSave}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl gap-3 text-base font-bold"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl gap-3 text-base font-bold"
           >
             <CheckCircle2 className="w-5 h-5" />
             Salvar Ambiente
