@@ -12,8 +12,8 @@ import NotFound from './pages/NotFound'
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-slate-100 font-sans selection:bg-blue-100 selection:text-blue-900">
-        <div className="mobile-container bg-white min-h-screen border-x border-slate-200">
+      <div className="min-h-screen bg-secondary font-sans selection:bg-primary/15 selection:text-primary">
+        <div className="mobile-container bg-card min-h-screen border-x border-border">
           {/* Main Content */}
           <main className="grow pb-24">
             <Routes>

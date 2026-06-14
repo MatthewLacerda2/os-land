@@ -1,22 +1,114 @@
 @import "tailwindcss";
 
+/*
+ * THE DESIGN SYSTEM.
+ *
+ * `@theme` maps `--color-*` tokens (used in className) to CSS variables whose
+ * values live in the `:root` (light) and `.dark` blocks below. This gives the
+ * shadcn primitives the full semantic token contract (background, foreground,
+ * card, popover, primary, secondary, muted, accent, destructive, border, input,
+ * ring) so they inherit the brand theme.
+ *
+ * Brand colors are preserved: primary is the deep blue, accent is the orange.
+ *
+ * NOTE: this is additive — Tailwind's default palette is intentionally NOT
+ * cleared here (that pairs with the lint allowlist work). Legacy brand tokens
+ * used by existing components (--color-primary-dark, --color-bg-light,
+ * --shadow-premium, --font-sans) are kept so nothing breaks.
+ */
+
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-primary: #1e40af; /* Deep Blue */
-  --color-primary-dark: #1e3a8a;
-  --color-accent: #f97316; /* Orange for status/details */
+  /* --- Semantic color tokens (resolve to the :root / .dark values). --- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* --- Legacy brand tokens (kept for existing consumers). --- */
+  --color-primary-dark: var(--primary-dark);
   --color-bg-light: #f8fafc;
-  --color-border: #e2e8f0;
-  
+
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
   --shadow-premium: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* --- Light theme token values. --- */
+:root {
+  --background: #f8fafc; /* slate-50 */
+  --foreground: #0f172a; /* slate-900 */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #1e40af; /* Deep Blue */
+  --primary-dark: #1e3a8a;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9; /* slate-100 */
+  --secondary-foreground: #1e293b; /* slate-800 */
+  --muted: #f8f9fa;
+  --muted-foreground: #64748b; /* slate-500 */
+  --accent: #f97316; /* Orange */
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626; /* red-600 */
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0; /* slate-200 */
+  --input: #e2e8f0;
+  --ring: #1e40af;
+}
+
+/* --- Dark theme token values. --- */
+.dark {
+  --background: #0f172a; /* slate-900 */
+  --foreground: #f8fafc; /* slate-50 */
+  --card: #1e293b; /* slate-800 */
+  --card-foreground: #f8fafc;
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
+  --primary: #3b82f6; /* lighter blue for dark surfaces */
+  --primary-dark: #1e40af;
+  --primary-foreground: #f8fafc;
+  --secondary: #334155; /* slate-700 */
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8; /* slate-400 */
+  --accent: #fb923c; /* lighter orange for dark surfaces */
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444; /* red-500 */
+  --destructive-foreground: #f8fafc;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #3b82f6;
 }
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
   }
-  
+
   h1, h2, h3 {
     @apply font-sans font-bold text-primary;
   }
@@ -30,6 +122,6 @@
 
 @layer components {
   .mobile-container {
-    @apply max-w-md mx-auto min-h-screen bg-white shadow-xl flex flex-col;
+    @apply max-w-md mx-auto min-h-screen bg-card shadow-xl flex flex-col;
   }
 }

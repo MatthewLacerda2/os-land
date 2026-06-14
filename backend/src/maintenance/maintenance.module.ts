@@ -6,6 +6,7 @@ import { MaintenanceOrder } from '../entities/maintenance-order.entity';
 import { MaintenancePhoto } from '../entities/maintenance-photo.entity';
 import { User } from '../entities/user.entity';
 import { MaintenanceController } from './maintenance.controller';
+import { MaintenanceRepository } from './maintenance.repository';
 import { MaintenanceService } from './maintenance.service';
 
 @Module({
@@ -19,6 +20,6 @@ import { MaintenanceService } from './maintenance.service';
     ]),
   ],
   controllers: [MaintenanceController],
-  providers: [MaintenanceService],
+  providers: [MaintenanceService, MaintenanceRepository],
 })
 export class MaintenanceModule {}
