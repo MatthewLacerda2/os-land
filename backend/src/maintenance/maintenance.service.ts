@@ -34,6 +34,7 @@ export class MaintenanceService {
     files: {
       'equipment-photos'?: Express.Multer.File[];
     },
+    technicianId: string,
   ) {
     const uploadDir = path.join(process.cwd(), 'uploads');
     if (!existsSync(uploadDir)) {
@@ -44,7 +45,7 @@ export class MaintenanceService {
 
     try {
       const savedOrder = await this.dataSource.transaction(async (tem) => {
-        const creator = await tem.findOneBy(User, { id: data.technicianId });
+        const creator = await tem.findOneBy(User, { id: technicianId });
         if (!creator) {
           throw new NotFoundException('User not found');
         }

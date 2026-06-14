@@ -17,3 +17,8 @@ Thumbs.db
 .claude/
 
 auxts.ts
+# Runtime uploads (user content; persisted via the uploads_data volume)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+auxts.ts
