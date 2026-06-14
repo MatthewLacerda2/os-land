@@ -7,7 +7,9 @@ import { Spinner } from '@/components/ui/spinner'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+// Empty default keeps photo URLs same-origin (/uploads/...), served via the
+// nginx (prod) / Vite dev proxy. Override with VITE_API_URL for a remote origin.
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 export default function MaintenanceView() {
   const { id } = useParams<{ id: string }>()

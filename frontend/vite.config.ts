@@ -16,5 +16,18 @@ export default defineConfig({
   },
   server: {
     host: true,
+    // Mirror the production nginx proxy so the SPA can use same-origin relative
+    // URLs (/api, /uploads) during `vite dev` too.
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/uploads': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
   },
 })
