@@ -58,36 +58,52 @@ export class MaintenanceRepository {
       const savedOrder = await tem.save(order);
 
       for (let i = 0; i < data.equipments.length; i++) {
-        const eqDto = data.equipments[i];
-        const environment = await tem.save(
-          tem.create(Environment, {
-            designatedSystem: eqDto.designatedSystem,
-            description: eqDto.description,
-            setPoint: eqDto.setPoint,
-          }),
-        );
-
-        const envService = await tem.save(
-          tem.create(EnvironmentService, {
-            order: savedOrder,
-            environment,
-          }),
-        );
-
-        const photos = await persistPhotos(envService, i);
-        for (const photo of photos) {
-          await tem.save(
-            tem.create(MaintenancePhoto, {
-              path: photo.path,
-              label: photo.label,
-              environmentService: envService,
-            }),
-          );
-        }
+        await this.persistEquipment(tem, savedOrder, data.equipments[i], i, persistPhotos);
       }
 
       return savedOrder;
     });
+  }
+
+  /**
+   * Persists a single equipment as an environment + environment service, then
+   * writes its photos using the caller-provided `persistPhotos` orchestrator.
+   */
+  private async persistEquipment(
+    tem: EntityManager,
+    savedOrder: MaintenanceOrder,
+    eqDto: CreateMaintenanceDto['equipments'][number],
+    equipmentIndex: number,
+    persistPhotos: (
+      envService: EnvironmentService,
+      equipmentIndex: number,
+    ) => Promise<PersistedPhoto[]>,
+  ): Promise<void> {
+    const environment = await tem.save(
+      tem.create(Environment, {
+        designatedSystem: eqDto.designatedSystem,
+        description: eqDto.description,
+        setPoint: eqDto.setPoint,
+      }),
+    );
+
+    const envService = await tem.save(
+      tem.create(EnvironmentService, {
+        order: savedOrder,
+        environment,
+      }),
+    );
+
+    const photos = await persistPhotos(envService, equipmentIndex);
+    for (const photo of photos) {
+      await tem.save(
+        tem.create(MaintenancePhoto, {
+          path: photo.path,
+          label: photo.label,
+          environmentService: envService,
+        }),
+      );
+    }
   }
 
   async findAndCount(
