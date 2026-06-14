@@ -32,7 +32,6 @@ export interface CreateEquipment {
 }
 
 export interface CreateMaintenanceRequest {
-  technicianId: string;
   osNumber: string;
   agency: string;
   agencyName?: string;
@@ -115,7 +114,6 @@ export const maintenanceApi = {
 
     // Append metadata
     const metadata = {
-      technicianId: data.technicianId,
       osNumber: data.osNumber,
       agency: data.agency,
       agencyName: data.agencyName,
