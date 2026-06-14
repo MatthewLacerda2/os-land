@@ -6,7 +6,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EnvironmentPhoto } from './entities/environment-photo.entity';
 import { EnvironmentService } from './entities/environment-service.entity';
 import { Environment } from './entities/environment.entity';
 import { MaintenanceOrder } from './entities/maintenance-order.entity';
@@ -35,9 +34,8 @@ import { RolesGuard } from './auth/roles.guard';
         User, 
         MaintenanceOrder, 
         Environment, 
-        EnvironmentService, 
-        MaintenancePhoto, 
-        EnvironmentPhoto
+        EnvironmentService,
+        MaintenancePhoto
       ],
       synchronize: true,
     }),

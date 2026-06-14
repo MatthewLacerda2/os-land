@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { EnvironmentPhoto } from './environment-photo.entity';
 import { EnvironmentService } from './environment-service.entity';
 
 export enum DesignatedSystem {
@@ -33,7 +32,4 @@ export class Environment {
 
   @OneToMany(() => EnvironmentService, (envService) => envService.environment)
   services: EnvironmentService[];
-
-  @OneToMany(() => EnvironmentPhoto, (photo) => photo.environment)
-  photos: EnvironmentPhoto[];
 }
