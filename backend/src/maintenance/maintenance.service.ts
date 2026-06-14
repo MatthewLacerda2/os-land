@@ -64,17 +64,21 @@ export class MaintenanceService {
     } catch (error) {
       // Roll back the written files on database transaction failure
       this.logger.warn('Maintenance order transaction failed. Initiating disk cleanup...');
-      for (const filePath of writtenFiles) {
-        try {
-          if (existsSync(filePath)) {
-            await fs.unlink(filePath);
-            this.logger.log(`Deleted orphaned file: ${filePath}`);
-          }
-        } catch (unlinkError) {
-          this.logger.error(`Failed to delete orphaned file ${filePath}:`, unlinkError);
-        }
-      }
+      await this.cleanupWrittenFiles(writtenFiles);
       throw error;
+    }
+  }
+
+  private async cleanupWrittenFiles(writtenFiles: string[]): Promise<void> {
+    for (const filePath of writtenFiles) {
+      try {
+        if (existsSync(filePath)) {
+          await fs.unlink(filePath);
+          this.logger.log(`Deleted orphaned file: ${filePath}`);
+        }
+      } catch (unlinkError) {
+        this.logger.error(`Failed to delete orphaned file ${filePath}:`, unlinkError);
+      }
     }
   }
 
