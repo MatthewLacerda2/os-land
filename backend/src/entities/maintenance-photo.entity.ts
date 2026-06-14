@@ -19,6 +19,8 @@ export class MaintenancePhoto {
   @Column()
   label: string;
 
-  @ManyToOne(() => EnvironmentService, (service) => service.photos, { onDelete: 'CASCADE' })
+  @ManyToOne(() => EnvironmentService, (service) => service.photos, {
+    onDelete: 'CASCADE',
+  })
   environmentService: EnvironmentService;
 }

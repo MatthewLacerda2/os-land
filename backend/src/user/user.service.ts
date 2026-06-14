@@ -1,4 +1,8 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from '../entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,7 +21,6 @@ export class UserService {
   }
 
   async create(userData: CreateUserDto): Promise<User> {
-
     if (userData.password !== userData.password_confirmation) {
       throw new BadRequestException('Passwords do not match');
     }
@@ -30,7 +33,8 @@ export class UserService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(userData.password, salt);
 
-    const { password_confirmation, ...userDetails } = userData;
+    const { password_confirmation: _password_confirmation, ...userDetails } =
+      userData;
 
     return this.userRepository.createUser({
       ...userDetails,

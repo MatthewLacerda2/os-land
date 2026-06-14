@@ -23,7 +23,7 @@ export default function MaintenanceView() {
         setIsLoading(true)
         const response = await maintenanceApi.view(id)
         setData(response)
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Fetch detail error:', err)
         setError('Não foi possível carregar os detalhes da manutenção.')
       } finally {

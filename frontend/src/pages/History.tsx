@@ -17,7 +17,7 @@ export default function History() {
         setIsLoading(true)
         const response = await maintenanceApi.list(0, 50)
         setServices(response.items)
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError('Erro ao carregar o histórico. Tente novamente mais tarde.')
         console.error('Fetch history error:', err)
       } finally {

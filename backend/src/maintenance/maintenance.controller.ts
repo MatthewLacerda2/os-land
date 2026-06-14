@@ -1,11 +1,36 @@
-import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseInterceptors, UseGuards, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { CreateMaintenanceDto, MaintenanceCreateResponseDto } from './dto/create-maintenance.dto';
-import { MaintenanceListResponseDto, PaginationQueryDto } from './dto/list-maintenance.dto';
+import {
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import {
+  CreateEquipmentDto,
+  CreateMaintenanceDto,
+  MaintenanceCreateResponseDto,
+} from './dto/create-maintenance.dto';
+import {
+  MaintenanceListResponseDto,
+  PaginationQueryDto,
+} from './dto/list-maintenance.dto';
 import { MaintenanceReportResponseDto } from './dto/report-maintenance.dto';
 import { MaintenanceViewResponseDto } from './dto/view-maintenance.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuthenticatedUser } from '../auth/authenticated-user.interface';
 import type { Request } from 'express';
 
 import { MaintenanceService } from './maintenance.service';
@@ -22,38 +47,45 @@ export class MaintenanceController {
   @ApiResponse({ status: 200, type: MaintenanceListResponseDto })
   async listOrders(
     @Query() query: PaginationQueryDto,
-    @Req() req: Request
+    @Req() req: Request,
   ): Promise<MaintenanceListResponseDto> {
-    const user = req.user as any;
+    const user = req.user as AuthenticatedUser;
     return this.maintenanceService.list(
       user.userId,
       user.role,
       query.offset || 0,
-      query.limit || 10
+      query.limit || 10,
     );
   }
 
   @Post('create')
-  @ApiOperation({ summary: 'Create a new maintenance order with multiple images' })
+  @ApiOperation({
+    summary: 'Create a new maintenance order with multiple images',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 201, type: MaintenanceCreateResponseDto })
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'equipment-photos', maxCount: 20 },
-  ]))
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'equipment-photos', maxCount: 20 }]),
+  )
   async createOrder(
     @Body() data: CreateMaintenanceDto,
-    @UploadedFiles() files: {
-      'equipment-photos'?: Express.Multer.File[],
+    @UploadedFiles()
+    files: {
+      'equipment-photos'?: Express.Multer.File[];
     },
-    @Req() req: Request
+    @Req() req: Request,
   ): Promise<MaintenanceCreateResponseDto> {
     // If the data comes from a Multipart form, 'equipments' will be a string
     if (typeof data.equipments === 'string') {
-      data.equipments = JSON.parse(data.equipments);
+      data.equipments = JSON.parse(data.equipments) as CreateEquipmentDto[];
     }
 
-    const user = req.user as any;
-    const savedOrder = await this.maintenanceService.create(data, files, user.userId);
+    const user = req.user as AuthenticatedUser;
+    const savedOrder = await this.maintenanceService.create(
+      data,
+      files,
+      user.userId,
+    );
     return {
       id: savedOrder.id,
       agency: savedOrder.agency,
@@ -66,7 +98,7 @@ export class MaintenanceController {
   @ApiOperation({ summary: 'View a single maintenance order' })
   @ApiResponse({ status: 200, type: MaintenanceViewResponseDto })
   async viewOrder(
-    @Param('id') id: string
+    @Param('id') id: string,
   ): Promise<MaintenanceViewResponseDto> {
     return this.maintenanceService.findById(id);
   }
@@ -75,9 +107,9 @@ export class MaintenanceController {
   @ApiOperation({ summary: 'Generate maintenance report PDF' })
   @ApiResponse({ status: 200, type: MaintenanceReportResponseDto })
   generateReport(@Param('id') id: string): MaintenanceReportResponseDto {
-    return { 
+    return {
       url: `http://localhost:3000/reports/stub-${id}.pdf`,
-      filename: `Report-${id}.pdf`
+      filename: `Report-${id}.pdf`,
     };
   }
 }

@@ -4,7 +4,10 @@ import { promises as fs, existsSync } from 'fs';
 import * as path from 'path';
 import { EnvironmentService } from '../entities/environment-service.entity';
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
-import { MaintenanceRepository, PersistedPhoto } from './maintenance.repository';
+import {
+  MaintenanceRepository,
+  PersistedPhoto,
+} from './maintenance.repository';
 
 @Injectable()
 export class MaintenanceService {
@@ -27,43 +30,48 @@ export class MaintenanceService {
     const writtenFiles: string[] = [];
 
     try {
-      const savedOrder = await this.maintenanceRepository.createOrderWithEnvironments(
-        data,
-        technicianId,
-        async (
-          _envService: EnvironmentService,
-          equipmentIndex: number,
-        ): Promise<PersistedPhoto[]> => {
-          const eqDto = data.equipments[equipmentIndex];
-          const persisted: PersistedPhoto[] = [];
+      const savedOrder =
+        await this.maintenanceRepository.createOrderWithEnvironments(
+          data,
+          technicianId,
+          async (
+            _envService: EnvironmentService,
+            equipmentIndex: number,
+          ): Promise<PersistedPhoto[]> => {
+            const eqDto = data.equipments[equipmentIndex];
+            const persisted: PersistedPhoto[] = [];
 
-          if (!eqDto || !files['equipment-photos']) {
-            return persisted;
-          }
-
-          for (const photoDto of eqDto.environmentPhotos) {
-            // The frontend sends fileKey which matches the originalname we gave in the FormData append
-            const file = files['equipment-photos'].find((f) => f.originalname === photoDto.fileKey);
-            if (file) {
-              const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
-              const filePath = path.join(uploadDir, fileName);
-
-              // Asynchronous, non-blocking file write
-              await fs.writeFile(filePath, file.buffer);
-              writtenFiles.push(filePath);
-
-              persisted.push({ path: fileName, label: photoDto.label });
+            if (!eqDto || !files['equipment-photos']) {
+              return persisted;
             }
-          }
 
-          return persisted;
-        },
-      );
+            for (const photoDto of eqDto.environmentPhotos) {
+              // The frontend sends fileKey which matches the originalname we gave in the FormData append
+              const file = files['equipment-photos'].find(
+                (f) => f.originalname === photoDto.fileKey,
+              );
+              if (file) {
+                const fileName = `${randomUUID()}${path.extname(file.originalname)}`;
+                const filePath = path.join(uploadDir, fileName);
+
+                // Asynchronous, non-blocking file write
+                await fs.writeFile(filePath, file.buffer);
+                writtenFiles.push(filePath);
+
+                persisted.push({ path: fileName, label: photoDto.label });
+              }
+            }
+
+            return persisted;
+          },
+        );
 
       return savedOrder;
     } catch (error) {
       // Roll back the written files on database transaction failure
-      this.logger.warn('Maintenance order transaction failed. Initiating disk cleanup...');
+      this.logger.warn(
+        'Maintenance order transaction failed. Initiating disk cleanup...',
+      );
       for (const filePath of writtenFiles) {
         try {
           if (existsSync(filePath)) {
@@ -71,7 +79,10 @@ export class MaintenanceService {
             this.logger.log(`Deleted orphaned file: ${filePath}`);
           }
         } catch (unlinkError) {
-          this.logger.error(`Failed to delete orphaned file ${filePath}:`, unlinkError);
+          this.logger.error(
+            `Failed to delete orphaned file ${filePath}:`,
+            unlinkError,
+          );
         }
       }
       throw error;
@@ -87,7 +98,7 @@ export class MaintenanceService {
     );
 
     return {
-      items: items.map(item => ({
+      items: items.map((item) => ({
         id: item.id,
         osNumber: item.osNumber,
         location: item.state, // Map as needed

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { userApi } from '../api/user-api';
 import logo from '../assets/checkout360.png';
@@ -28,8 +29,11 @@ const Login: React.FC = () => {
         email: response.email
       }));
       navigate('/');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+    } catch (err: unknown) {
+      const message = axios.isAxiosError<{ message?: string }>(err)
+        ? err.response?.data?.message
+        : undefined;
+      setError(message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }

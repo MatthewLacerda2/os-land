@@ -19,7 +19,9 @@ export default function PageHeader({ title, subtitle, back, className }: PageHea
         <Button
           variant="outline"
           size="icon"
-          onClick={() => navigate(back as any)}
+          onClick={() =>
+            typeof back === 'number' ? navigate(back) : navigate(back)
+          }
           className="w-10 h-10 bg-card rounded-full flex items-center justify-center text-muted-foreground shadow-sm border-border"
         >
           <ChevronLeft className="w-5 h-5" />

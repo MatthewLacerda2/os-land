@@ -1,3 +1,4 @@
+import type { MaintenancePhoto } from '@/api/maintenance-api'
 import { Card } from '@/components/ui/card'
 import {
   Building2,
@@ -10,7 +11,7 @@ import {
 
 interface MaintenanceDetailCardProps {
   system: string;
-  photos: any[];
+  photos: MaintenancePhoto[];
   getImageUrl: (path: string) => string;
 }
 
