@@ -35,7 +35,9 @@ export class SeedService implements OnApplicationBootstrap {
 
       const existingUser = await this.userService.findOneByEmail(email);
       if (existingUser) {
-        this.logger.warn(`User with email ${email} already exists but is not a manager. Skipping root user creation to avoid conflict.`);
+        this.logger.warn(
+          `User with email ${email} already exists but is not a manager. Skipping root user creation to avoid conflict.`,
+        );
         return;
       }
 
@@ -49,7 +51,9 @@ export class SeedService implements OnApplicationBootstrap {
 
       this.logger.log(`Root user created successfully: ${email}`);
     } else {
-      this.logger.log('Manager user already exists. Skipping root user creation.');
+      this.logger.log(
+        'Manager user already exists. Skipping root user creation.',
+      );
     }
   }
 }

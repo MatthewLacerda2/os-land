@@ -1,14 +1,11 @@
-import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-import { defineConfig } from 'vite'
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -19,15 +16,15 @@ export default defineConfig({
     // Mirror the production nginx proxy so the SPA can use same-origin relative
     // URLs (/api, /uploads) during `vite dev` too.
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
+      "/api": {
+        target: "http://localhost:3000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
-      '/uploads': {
-        target: 'http://localhost:3000',
+      "/uploads": {
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
     },
   },
-})
+});

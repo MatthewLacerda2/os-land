@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button'
-import { CheckCircle2, Download, Home, Share2 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, Download, Home, Share2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Complete() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-full p-8 text-center bg-card">
@@ -17,9 +17,12 @@ export default function Complete() {
 
       {/* Message */}
       <div className="space-y-3 mb-12">
-        <h2 className="text-3xl font-bold text-foreground">Serviço Concluído!</h2>
+        <h2 className="text-3xl font-bold text-foreground">
+          Serviço Concluído!
+        </h2>
         <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
-          A ordem de serviço foi registrada com sucesso e já está disponível no seu histórico.
+          A ordem de serviço foi registrada com sucesso e já está disponível no
+          seu histórico.
         </p>
       </div>
 
@@ -43,14 +46,13 @@ export default function Complete() {
         </div>
 
         <Button
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
           className="w-full h-14 rounded-2xl bg-primary hover:bg-primary-dark text-primary-foreground shadow-xl gap-3 text-base font-bold"
         >
           <Home className="w-5 h-5" />
           Voltar para o Início
         </Button>
       </div>
-
     </div>
-  )
+  );
 }

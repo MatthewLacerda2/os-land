@@ -41,11 +41,11 @@ import { validateEnv } from './config/env.validation';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [
-        User, 
-        MaintenanceOrder, 
-        Environment, 
+        User,
+        MaintenanceOrder,
+        Environment,
         EnvironmentService,
-        MaintenancePhoto
+        MaintenancePhoto,
       ],
       synchronize: true,
     }),

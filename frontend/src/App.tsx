@@ -1,13 +1,13 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import AddEnvironment from './pages/AddEnvironment'
-import Complete from './pages/Complete'
-import History from './pages/History'
-import NewService from './pages/NewService'
-import ReviewService from './pages/ReviewService'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AddEnvironment from "./pages/AddEnvironment";
+import Complete from "./pages/Complete";
+import History from "./pages/History";
+import NewService from "./pages/NewService";
+import ReviewService from "./pages/ReviewService";
 
-import MaintenanceView from './pages/MaintenanceView'
-import Login from './pages/Login'
-import NotFound from './pages/NotFound'
+import MaintenanceView from "./pages/MaintenanceView";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -20,18 +20,20 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<History />} />
               <Route path="/service/new" element={<NewService />} />
-              <Route path="/service/environment/add" element={<AddEnvironment />} />
+              <Route
+                path="/service/environment/add"
+                element={<AddEnvironment />}
+              />
               <Route path="/service/review" element={<ReviewService />} />
               <Route path="/service/view/:id" element={<MaintenanceView />} />
               <Route path="/service/complete" element={<Complete />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
-
         </div>
       </div>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

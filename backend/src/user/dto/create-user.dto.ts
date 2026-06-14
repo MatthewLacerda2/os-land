@@ -3,7 +3,10 @@ import { IsEmail, IsEnum, IsString, Matches, MinLength } from 'class-validator';
 import { UserRole } from '../../entities/user.entity';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'João Silva', description: 'At least 3 characters, no numbers/special chars' })
+  @ApiProperty({
+    example: 'João Silva',
+    description: 'At least 3 characters, no numbers/special chars',
+  })
   @IsString()
   @MinLength(3)
   @Matches(/^[a-zA-ZÀ-ÿ\s]+$/, {

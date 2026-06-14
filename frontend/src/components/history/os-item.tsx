@@ -1,16 +1,22 @@
-import { Card } from '@/components/ui/card'
-import { Calendar } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Card } from "@/components/ui/card";
+import { Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface OSItemProps {
-  id: string
-  number: string
-  description: string
-  location: string
-  date: string
+  id: string;
+  number: string;
+  description: string;
+  location: string;
+  date: string;
 }
 
-export default function OSItem({ id, number, description, location, date }: OSItemProps) {
+export default function OSItem({
+  id,
+  number,
+  description,
+  location,
+  date,
+}: OSItemProps) {
   return (
     <Link to={`/service/view/${id}`} className="block">
       <Card className="rounded-2xl p-6 shadow-sm border-border bg-muted flex flex-col gap-5 transition-all hover:shadow-md hover:border-border active:scale-[0.98] cursor-pointer group">
@@ -19,7 +25,7 @@ export default function OSItem({ id, number, description, location, date }: OSIt
             <h3 className="text-xl font-bold text-foreground tracking-tight">
               Nº {number}
             </h3>
-            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-none">
               {description}
             </p>
           </div>
@@ -27,16 +33,14 @@ export default function OSItem({ id, number, description, location, date }: OSIt
 
         <div className="space-y-4">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
               Agência / Local
             </p>
-            <p className="text-sm font-medium text-foreground">
-              {location}
-            </p>
+            <p className="text-sm font-medium text-foreground">{location}</p>
           </div>
 
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
               Data de Execução
             </p>
             <div className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -47,5 +51,5 @@ export default function OSItem({ id, number, description, location, date }: OSIt
         </div>
       </Card>
     </Link>
-  )
+  );
 }
