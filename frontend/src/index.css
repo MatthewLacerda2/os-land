@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /*
  * THE DESIGN SYSTEM.
@@ -11,15 +12,26 @@
  *
  * Brand colors are preserved: primary is the deep blue, accent is the orange.
  *
- * NOTE: this is additive — Tailwind's default palette is intentionally NOT
- * cleared here (that pairs with the lint allowlist work). Legacy brand tokens
- * used by existing components (--color-primary-dark, --color-bg-light,
- * --shadow-premium, --font-sans) are kept so nothing breaks.
+ * Tailwind's default color palette is cleared (`--color-*: initial`) so any
+ * raw palette class (e.g. `bg-red-500`) generates NO CSS and is rejected by the
+ * `better-tailwindcss/no-unregistered-classes` lint rule. Color becomes an
+ * allowlist of the semantic tokens declared below (plus transparent/black/white).
+ * Legacy brand tokens used by existing components (--color-primary-dark,
+ * --color-bg-light, --shadow-premium, --font-sans) are kept so nothing breaks.
  */
 
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* --- Clear Tailwind's default palette: color is an allowlist. --- */
+  --color-*: initial;
+
+  /* --- Universal keyword colors (kept available to all utilities). --- */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-black: #000000;
+  --color-white: #ffffff;
+
   /* --- Semantic color tokens (resolve to the :root / .dark values). --- */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -47,7 +59,8 @@
 
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  --shadow-premium: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-premium:
+    0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
 
   --radius: 0.625rem;
   --radius-sm: calc(var(--radius) - 4px);
@@ -109,7 +122,9 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     @apply font-sans font-bold text-primary;
   }
 
