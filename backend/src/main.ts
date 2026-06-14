@@ -1,11 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
+  // Set secure HTTP headers
+  app.use(helmet());
+
   // Enable global validation (Like Pydantic in FastAPI)
   app.useGlobalPipes(new ValidationPipe({
     whitelist: false,

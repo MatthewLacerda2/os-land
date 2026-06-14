@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto, UserResponseDto } from './dto/create-user.dto';
 import { LoginDto, LoginResponseDto } from './dto/login.dto';
@@ -32,6 +33,7 @@ export class UserController {
   }
 
   @Public()
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('login')
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, type: LoginResponseDto })
