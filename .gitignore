@@ -13,4 +13,7 @@ Thumbs.db
 # Docker
 .docker/
 
+# Claude Code agent worktrees (transient)
+.claude/
+
 auxts.ts
