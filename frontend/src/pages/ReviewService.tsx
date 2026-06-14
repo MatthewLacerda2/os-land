@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Building2,
   Image as ImageIcon,
@@ -7,26 +7,29 @@ import {
   Pencil,
   Plus,
   Send,
-  Server
-} from 'lucide-react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+  Server,
+} from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { maintenanceApi, type CreateMaintenanceRequest } from '@/api/maintenance-api'
-import { useServiceStore } from '@/store/useServiceStore'
+import {
+  maintenanceApi,
+  type CreateMaintenanceRequest,
+} from "@/api/maintenance-api";
+import { useServiceStore } from "@/store/useServiceStore";
 
 export default function ReviewService() {
-  const navigate = useNavigate()
-  const { currentOrder, resetOrder } = useServiceStore()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const navigate = useNavigate();
+  const { currentOrder, resetOrder } = useServiceStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleConfirm = async () => {
     // Get real user ID from localStorage
-    const storedUser = localStorage.getItem('os_land_user')
-    const user = storedUser ? JSON.parse(storedUser) : null
-    const userId = user?.id || '00000000-0000-0000-0000-000000000000'
+    const storedUser = localStorage.getItem("os_land_user");
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const userId = user?.id || "00000000-0000-0000-0000-000000000000";
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       // Map store data to API request format
       const payload: CreateMaintenanceRequest = {
@@ -49,21 +52,23 @@ export default function ReviewService() {
           environmentPhotos: env.photos.map((p, idx) => ({
             label: p.label,
             file: p.file,
-            fileKey: `temp_${idx}` // The API utility will re-generate unique keys
-          }))
-        }))
+            fileKey: `temp_${idx}`, // The API utility will re-generate unique keys
+          })),
+        })),
       };
 
       await maintenanceApi.create(payload);
       resetOrder();
-      navigate('/service/complete');
+      navigate("/service/complete");
     } catch (error) {
-      console.error('Failed to create maintenance order:', error);
-      alert('Ocorreu um erro ao enviar a ordem de serviço. Verifique sua conexão e tente novamente.');
+      console.error("Failed to create maintenance order:", error);
+      alert(
+        "Ocorreu um erro ao enviar a ordem de serviço. Verifique sua conexão e tente novamente.",
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col min-h-full bg-muted/50 pb-10">
@@ -79,11 +84,15 @@ export default function ReviewService() {
         {/* General Info Section */}
         <Card className="rounded-3xl shadow-sm border-border overflow-hidden">
           <CardHeader className="flex flex-row justify-between items-center p-5 pb-2">
-            <CardTitle className="text-lg font-bold text-foreground">Informações Gerais</CardTitle>
+            <CardTitle className="text-lg font-bold text-foreground">
+              Informações Gerais
+            </CardTitle>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/service/new', { state: { fromReview: true } })}
+              onClick={() =>
+                navigate("/service/new", { state: { fromReview: true } })
+              }
               className="w-8 h-8 bg-muted rounded-full text-primary hover:bg-primary/10 transition-colors"
             >
               <Pencil className="w-3.5 h-3.5" />
@@ -92,29 +101,56 @@ export default function ReviewService() {
 
           <CardContent className="p-5 pt-2 grid gap-4">
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Número da OS</p>
-              <p className="text-sm font-bold text-foreground">{currentOrder.osNumber || 'N/A'}</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                Número da OS
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {currentOrder.osNumber || "N/A"}
+              </p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Agência</p>
-              <p className="text-sm font-bold text-foreground">{currentOrder.agency || 'N/A'} {currentOrder.agencyName && `- ${currentOrder.agencyName}`}</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                Agência
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {currentOrder.agency || "N/A"}{" "}
+                {currentOrder.agencyName && `- ${currentOrder.agencyName}`}
+              </p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nº de Bem</p>
-              <p className="text-sm font-bold text-foreground">{currentOrder.assetNumber || 'N/A'}</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                Nº de Bem
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {currentOrder.assetNumber || "N/A"}
+              </p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">UF</p>
-              <p className="text-sm font-bold text-foreground">{currentOrder.state?.toUpperCase() || 'N/A'}</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                UF
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {currentOrder.state?.toUpperCase() || "N/A"}
+              </p>
             </div>
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Protocolo</p>
-              <p className="text-sm font-bold text-foreground">{currentOrder.protocolType === 'corrective' ? 'Corretiva' : 'Preventiva'}</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                Protocolo
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {currentOrder.protocolType === "corrective"
+                  ? "Corretiva"
+                  : "Preventiva"}
+              </p>
             </div>
             {currentOrder.environmentName && (
               <div className="space-y-0.5">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Ambiente</p>
-                <p className="text-sm font-bold text-foreground">{currentOrder.environmentName}</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                  Ambiente
+                </p>
+                <p className="text-sm font-bold text-foreground">
+                  {currentOrder.environmentName}
+                </p>
               </div>
             )}
           </CardContent>
@@ -123,12 +159,14 @@ export default function ReviewService() {
         {/* Environments Section */}
         <Card className="rounded-3xl shadow-sm border-border overflow-hidden">
           <CardHeader className="flex flex-row justify-between items-center p-5 pb-2">
-            <CardTitle className="text-lg font-bold text-foreground">Ambientes</CardTitle>
+            <CardTitle className="text-lg font-bold text-foreground">
+              Ambientes
+            </CardTitle>
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => navigate('/service/environment/add')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-bold hover:bg-primary/20 transition-colors h-7"
+              onClick={() => navigate("/service/environment/add")}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold hover:bg-primary/20 transition-colors h-7"
             >
               <Plus className="w-3 h-3" />
               Adicionar
@@ -137,16 +175,24 @@ export default function ReviewService() {
 
           <CardContent className="p-5 pt-2 space-y-4">
             {currentOrder.environments.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic text-center py-4">Nenhum ambiente adicionado.</p>
+              <p className="text-xs text-muted-foreground italic text-center py-4">
+                Nenhum ambiente adicionado.
+              </p>
             ) : (
               currentOrder.environments.map((env) => (
                 <EnvironmentItem
                   key={env.id}
                   name={env.designatedSystem}
                   details={`${env.photos.length} fotos capturadas`}
-                  icon={env.designatedSystem === 'split' ? <Server className="w-5 h-5" /> : <Building2 className="w-5 h-5" />}
-                  photos={env.photos.map(p => p.previewUrl)}
-                  onEdit={() => navigate('/service/environment/add')}
+                  icon={
+                    env.designatedSystem === "split" ? (
+                      <Server className="w-5 h-5" />
+                    ) : (
+                      <Building2 className="w-5 h-5" />
+                    )
+                  }
+                  photos={env.photos.map((p) => p.previewUrl)}
+                  onEdit={() => navigate("/service/environment/add")}
                 />
               ))
             )}
@@ -165,12 +211,12 @@ export default function ReviewService() {
             ) : (
               <Send className="w-5 h-5" />
             )}
-            {isSubmitting ? 'Enviando...' : 'Confirmar e Enviar'}
+            {isSubmitting ? "Enviando..." : "Confirmar e Enviar"}
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 interface EnvironmentItemProps {
@@ -181,7 +227,13 @@ interface EnvironmentItemProps {
   onEdit: () => void;
 }
 
-function EnvironmentItem({ name, details, icon, photos, onEdit }: EnvironmentItemProps) {
+function EnvironmentItem({
+  name,
+  details,
+  icon,
+  photos,
+  onEdit,
+}: EnvironmentItemProps) {
   return (
     <div className="space-y-3 p-4 rounded-2xl border border-border bg-muted/50">
       <div className="flex items-center gap-3">
@@ -190,13 +242,15 @@ function EnvironmentItem({ name, details, icon, photos, onEdit }: EnvironmentIte
         </div>
         <div className="grow">
           <h4 className="text-xs font-bold text-foreground">{name}</h4>
-          <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider">{details}</p>
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+            {details}
+          </p>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={onEdit}
-          className="h-7 px-2 text-[10px] font-bold text-primary hover:bg-primary/10"
+          className="h-7 px-2 text-xs font-bold text-primary hover:bg-primary/10"
         >
           Editar
         </Button>
@@ -205,17 +259,24 @@ function EnvironmentItem({ name, details, icon, photos, onEdit }: EnvironmentIte
       {/* Miniatures */}
       <div className="flex gap-2 overflow-x-auto pb-1">
         {photos.map((src, i) => (
-          <div key={i} className="w-12 h-12 rounded-lg bg-card border border-border shrink-0 overflow-hidden">
-            <img src={src} className="w-full h-full object-cover" alt="Preview" />
+          <div
+            key={i}
+            className="w-12 h-12 rounded-lg bg-card border border-border shrink-0 overflow-hidden"
+          >
+            <img
+              src={src}
+              className="w-full h-full object-cover"
+              alt="Preview"
+            />
           </div>
         ))}
         {photos.length === 0 && (
-          <div className="flex items-center gap-1.5 text-muted-foreground text-[9px] italic">
+          <div className="flex items-center gap-1.5 text-muted-foreground text-xs italic">
             <ImageIcon className="w-3 h-3" />
             Nenhuma foto
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

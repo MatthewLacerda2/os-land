@@ -1,4 +1,4 @@
-import client from './client';
+import client from "./client";
 
 export interface MaintenanceItem {
   id: string;
@@ -91,25 +91,27 @@ export interface MaintenanceViewResponse {
 
 export const maintenanceApi = {
   list: async (offset = 0, limit = 10): Promise<MaintenanceListResponse> => {
-    const response = await client.get('/maintenance/list', {
+    const response = await client.get("/maintenance/list", {
       params: { offset, limit },
     });
     return response.data;
   },
 
-  create: async (data: CreateMaintenanceRequest): Promise<MaintenanceCreateResponse> => {
+  create: async (
+    data: CreateMaintenanceRequest,
+  ): Promise<MaintenanceCreateResponse> => {
     const formData = new FormData();
-    
+
     const processedEquipments = data.equipments.map((eq, eqIdx) => {
       const photos = eq.environmentPhotos.map((p, pIdx) => {
         const fileKey = `eq_${eqIdx}_photo_${pIdx}`;
-        formData.append('equipment-photos', p.file, fileKey);
+        formData.append("equipment-photos", p.file, fileKey);
         return { label: p.label, fileKey };
       });
 
       return {
         ...eq,
-        environmentPhotos: photos
+        environmentPhotos: photos,
       };
     });
 
@@ -131,14 +133,14 @@ export const maintenanceApi = {
     };
 
     Object.entries(metadata).forEach(([key, value]) => {
-      if (key === 'equipments') {
+      if (key === "equipments") {
         formData.append(key, JSON.stringify(value));
       } else if (value !== undefined) {
         formData.append(key, value as string);
       }
     });
 
-    const response = await client.post('/maintenance/create', formData);
+    const response = await client.post("/maintenance/create", formData);
     return response.data;
   },
 
