@@ -26,7 +26,8 @@ back-lint:
 back-build:
 	cd backend && $(BUN) run build
 
-# jest has no spec files yet; --passWithNoTests keeps the gate green until tests exist.
+# --passWithNoTests keeps the gate green even if every spec is later removed.
+# Spec files boot a throwaway Postgres cluster via test/setup/global-setup.ts.
 back-test:
 	cd backend && $(BUN) run test -- --passWithNoTests
 

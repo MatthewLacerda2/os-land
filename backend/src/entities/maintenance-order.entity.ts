@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EnvironmentService } from './environment-service.entity';
-import { ProtocolType } from './environment.entity';
+import { ProtocolType } from './environment.enums';
 import { User } from './user.entity';
 
 @Entity('maintenance_orders')

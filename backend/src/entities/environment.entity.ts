@@ -1,16 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EnvironmentService } from './environment-service.entity';
+import { DesignatedSystem } from './environment.enums';
 
-export enum DesignatedSystem {
-  SPLIT = 'split',
-  SELF = 'self',
-  SPLITAO = 'splitao',
-}
-
-export enum ProtocolType {
-  CORRECTIVE = 'corrective',
-  PREVENTIVE = 'preventive',
-}
+// Re-exported for backward compatibility with existing imports.
+export { DesignatedSystem, ProtocolType } from './environment.enums';
 
 @Entity('environments')
 export class Environment {

@@ -11,7 +11,7 @@ import {
 import {
   DesignatedSystem,
   ProtocolType,
-} from '../../entities/environment.entity';
+} from '../../entities/environment.enums';
 
 export class CreateEquipmentPhotoDto {
   @ApiProperty({ example: 'Evaporadora' })
