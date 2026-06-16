@@ -16,6 +16,8 @@ import {
   existsSync,
   mkdtempSync,
   readdirSync,
+  readFileSync,
+  rmSync,
   writeFileSync,
 } from 'fs';
 import { tmpdir } from 'os';
@@ -63,9 +65,44 @@ function resolvePgBinDir(): string {
   return '';
 }
 
+/**
+ * Best-effort cleanup of a cluster leaked by a previous run that was hard-killed
+ * before globalTeardown could stop it. Without this, the leaked server keeps the
+ * fixed port bound and the next run fails with "address already in use".
+ */
+function stopStaleCluster(bin: (name: string) => string): void {
+  if (!existsSync(STATE_FILE)) {
+    return;
+  }
+  try {
+    const stale = JSON.parse(readFileSync(STATE_FILE, 'utf8')) as {
+      dataDir: string;
+    };
+    if (existsSync(stale.dataDir)) {
+      try {
+        pgExec(bin('pg_ctl'), [
+          '-D',
+          stale.dataDir,
+          '-m',
+          'immediate',
+          '-w',
+          'stop',
+        ]);
+      } catch {
+        // Already stopped — fine.
+      }
+      rmSync(stale.dataDir, { recursive: true, force: true });
+    }
+  } catch {
+    // Unreadable state file — fall through and overwrite it below.
+  }
+  rmSync(STATE_FILE, { force: true });
+}
+
 export default function globalSetup(): void {
   const binDir = resolvePgBinDir();
   const bin = (name: string): string => (binDir ? join(binDir, name) : name);
+  stopStaleCluster(bin);
   const dataDir = mkdtempSync(join(tmpdir(), 'os-land-pgdata-'));
 
   // mkdtemp makes the dir root-owned; hand it to the postgres user so it can
